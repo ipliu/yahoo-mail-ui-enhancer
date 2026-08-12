@@ -1,0 +1,8 @@
+{
+  "name": "yahoo-mail-ui-enhancer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

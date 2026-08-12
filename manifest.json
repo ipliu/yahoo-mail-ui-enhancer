@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Yahoo Mail UI Enhancer",
+  "version": "0.1.0",
+  "description": "Focused, offline visual improvements for the Supported Mail Interface.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://mail.yahoo.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://mail.yahoo.com/*"],
+      "js": ["src/page-controller.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
