@@ -63,8 +63,8 @@ function createElement() {
       for (const child of this.children) {
         if (selector === '[data-test-id="unread-indicator"]' &&
           child.getAttribute("data-test-id") === "unread-indicator") matches.push(child);
-        if (selector === '[data-test-id="mail-row"]' &&
-          child.getAttribute("data-test-id") === "mail-row") matches.push(child);
+        if (selector === 'a[role="row"]' &&
+          child.getAttribute("role") === "row") matches.push(child);
         matches.push(...child.querySelectorAll(selector));
       }
       return matches;
@@ -102,7 +102,7 @@ function createStorage(values = {}) {
 }
 
 function createMailDocument({
-  url = "https://mail.yahoo.com/d/folders/1",
+  url = "https://mail.yahoo.com/n/folders/1",
   includeSidebar = true,
   includeWorkspace = true,
   sidebarInApplication = true,
@@ -115,29 +115,27 @@ function createMailDocument({
   const sidebar = createElement();
   const workspace = createElement();
   const documentElement = createElement();
-  const themeMarker = createElement();
-  themeMarker.setAttribute("data-test-id", "mail-theme-marker");
-  themeMarker.setAttribute("data-theme", theme);
-  application.append(toolbar);
+  const body = createElement();
+  body.setAttribute("data-color-scheme", theme);
   application.append(mainContent);
   if (includeWorkspace) application.append(workspace);
   if (includeSidebar && sidebarInApplication) application.append(sidebar);
-  application.append(themeMarker);
+  body.append(toolbar, application);
   for (const row of rows) workspace.append(row);
 
   const anchors = new Map([
     ['[data-test-id="mail-app"]', application],
-    ['[data-test-id="mail-toolbar"]', toolbar],
-    ['[data-test-id="mail-main"]', mainContent],
-    ['[data-test-id="mail-sidebar"]', includeSidebar ? sidebar : null],
-    ['[data-test-id="mail-workspace"]', includeWorkspace ? workspace : null],
-    ['[data-test-id="mail-theme-marker"]', themeMarker],
+    ['[data-test-id="novation-ybar-header"]', toolbar],
+    ['[data-test-id="novation-main-content"]', mainContent],
+    ['[data-test-id="novation-right-rail"]', includeSidebar ? sidebar : null],
+    ['[data-test-id="virtual-list"]', includeWorkspace ? workspace : null],
   ]);
 
   return {
     application,
     document: {
       documentElement,
+      body,
       location: new URL(url),
       createElement,
       querySelector(selector) {
@@ -146,7 +144,7 @@ function createMailDocument({
     },
     mainContent,
     sidebar,
-    themeMarker,
+    body,
     toolbar,
     workspace,
   };
@@ -154,20 +152,23 @@ function createMailDocument({
 
 function createMessageRow({ unread = false } = {}) {
   const row = createElement();
-  row.setAttribute("data-test-id", "mail-row");
+  row.setAttribute("role", "row");
   const sender = createElement();
-  sender.setAttribute("data-test-id", "mail-sender");
   const subject = createElement();
-  subject.setAttribute("data-test-id", "mail-subject");
   const preview = createElement();
   preview.setAttribute("data-test-id", "mail-preview");
   const date = createElement();
   date.setAttribute("data-test-id", "mail-date");
-  row.append(sender, subject, preview, date);
+  const selectionDetails = createElement();
+  const messageDetails = createElement();
+  const dateDetails = createElement();
+  messageDetails.append(sender, subject, preview);
+  dateDetails.append(date);
+  row.append(selectionDetails, messageDetails, dateDetails);
   if (unread) {
     const unreadIndicator = createElement();
     unreadIndicator.setAttribute("data-test-id", "unread-indicator");
-    row.append(unreadIndicator);
+    selectionDetails.append(unreadIndicator);
   }
   return { date, preview, row, sender, subject };
 }
@@ -278,7 +279,7 @@ test("leaves pages with missing or altered mail anchors unchanged", async () => 
 test("leaves a non-mail workspace unchanged", async () => {
   const PageController = loadPageController();
   const page = createMailDocument({
-    url: "https://mail.yahoo.com/d/calendar",
+    url: "https://mail.yahoo.com/n/calendar",
     includeWorkspace: false,
   });
 
@@ -357,7 +358,7 @@ test("removes Unread Emphasis after mail-list replacement or a theme change", as
   const page = createMailDocument({ rows: [unread.row] });
   const controller = new PageController(page.document, createStorage());
   await controller.start();
-  page.themeMarker.setAttribute("data-theme", "light");
+  page.body.setAttribute("data-color-scheme", "light");
 
   controller.refresh();
 
@@ -384,24 +385,28 @@ test("keeps Unread Emphasis from overriding native interaction states", () => {
   assert.match(unreadStyles, /:not\(:focus-within\)/);
   assert.match(unreadStyles, /:not\(\[aria-selected="true"\]\)/);
   assert.match(unreadStyles, /:not\(\[data-dragging="true"\]\)/);
+  assert.match(unreadStyles, /\[data-yme-unread-text="true"\]/);
 });
 
-test("keeps Sidebar Concealment active when the Mail Theme Marker disappears", async () => {
+test("does not emphasize text when an unread row structure is not verified", async () => {
+  const PageController = loadPageController();
+  const unread = createMessageRow({ unread: true });
+  const page = createMailDocument({ rows: [unread.row] });
+  unread.row.children[1].children = [unread.sender];
+
+  await new PageController(page.document, createStorage()).start();
+
+  assert.equal(unread.row.getAttribute("data-yme-unread-emphasis"), "true");
+  assert.equal(unread.sender.hasAttribute("data-yme-unread-text"), false);
+});
+
+test("keeps Sidebar Concealment active when the Mail Theme Marker is not dark", async () => {
   const PageController = loadPageController();
   const unread = createMessageRow({ unread: true });
   const page = createMailDocument({ rows: [unread.row] });
   const controller = new PageController(page.document, createStorage());
   await controller.start();
-  page.document.querySelector = (selector) => {
-    if (selector === '[data-test-id="mail-theme-marker"]') return null;
-    return new Map([
-      ['[data-test-id="mail-app"]', page.application],
-      ['[data-test-id="mail-toolbar"]', page.toolbar],
-      ['[data-test-id="mail-main"]', page.mainContent],
-      ['[data-test-id="mail-sidebar"]', page.sidebar],
-      ['[data-test-id="mail-workspace"]', page.workspace],
-    ]).get(selector) ?? null;
-  };
+  page.body.removeAttribute("data-color-scheme");
 
   controller.refresh();
 

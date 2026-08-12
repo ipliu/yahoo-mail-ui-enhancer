@@ -1,4 +1,4 @@
-html[data-yme-sidebar-concealed="true"] [data-test-id="mail-sidebar"] {
+html[data-yme-sidebar-concealed="true"] [data-test-id="novation-right-rail"] {
   display: none !important;
 }
 
@@ -22,7 +22,6 @@ html[data-yme-sidebar-concealed="true"] [data-test-id="mail-sidebar"] {
   background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
-[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) [data-test-id="mail-sender"],
-[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) [data-test-id="mail-subject"] {
+[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) [data-yme-unread-text="true"] {
   font-weight: 600;
 }

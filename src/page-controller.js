@@ -3,10 +3,10 @@
 
   const REQUIRED_ANCHORS = Object.freeze({
     application: '[data-test-id="mail-app"]',
-    toolbar: '[data-test-id="mail-toolbar"]',
-    mainContent: '[data-test-id="mail-main"]',
-    sidebar: '[data-test-id="mail-sidebar"]',
-    workspace: '[data-test-id="mail-workspace"]',
+    toolbar: '[data-test-id="novation-ybar-header"]',
+    mainContent: '[data-test-id="novation-main-content"]',
+    sidebar: '[data-test-id="novation-right-rail"]',
+    workspace: '[data-test-id="virtual-list"]',
   });
   const MANAGED_VIEW_ATTRIBUTE = "data-yme-mail-view";
   const SIDEBAR_CONCEALED_ATTRIBUTE = "data-yme-sidebar-concealed";
@@ -17,7 +17,7 @@
   function isSupportedMailRoute(location) {
     return location.protocol === "https:" &&
       location.hostname === "mail.yahoo.com" &&
-      location.pathname.startsWith("/d/");
+      location.pathname.startsWith("/n/folders/");
   }
 
   function findVerifiedAnchors(document) {
@@ -28,8 +28,8 @@
     );
 
     if (Object.values(anchors).some((anchor) => anchor === null)) return null;
-    if (Object.values(anchors).some((anchor) => !anchors.application.contains(anchor))) return null;
-
+    if (![anchors.mainContent, anchors.sidebar, anchors.workspace]
+      .every((anchor) => anchors.application.contains(anchor))) return null;
     return anchors;
   }
 
@@ -125,18 +125,41 @@
     }
 
     renderUnreadEmphasis(anchors) {
-      const rows = anchors.workspace.querySelectorAll('[data-test-id="mail-row"]');
-      const themeMarker = this.document.querySelector('[data-test-id="mail-theme-marker"]');
-      const isDarkTheme = themeMarker?.getAttribute("data-theme") === "dark";
+      const rows = anchors.workspace.querySelectorAll('a[role="row"]');
+      const isDarkTheme = this.document.body?.getAttribute("data-color-scheme") === "dark";
 
       for (const row of rows) {
         const isUnread = row.querySelector('[data-test-id="unread-indicator"]') !== null;
         if (this.isUnreadEmphasisEnabled && isDarkTheme && isUnread) {
           row.setAttribute(UNREAD_EMPHASIS_ATTRIBUTE, "true");
+          this.renderUnreadTextEmphasis(row, true);
         } else {
           row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
+          this.renderUnreadTextEmphasis(row, false);
         }
       }
+    }
+
+    renderUnreadTextEmphasis(row, isEnabled) {
+      const textElements = this.findVerifiedUnreadTextElements(row);
+
+      for (const element of textElements) {
+        element.toggleAttribute("data-yme-unread-text", isEnabled);
+      }
+    }
+
+    findVerifiedUnreadTextElements(row) {
+      const messageDetails = row.children?.[1];
+      const sender = messageDetails?.children?.[0];
+      const subject = messageDetails?.children?.[1];
+
+      if (!row.querySelector('[data-test-id="unread-indicator"]') ||
+        row.children?.length !== 3 ||
+        messageDetails?.children?.length !== 3 ||
+        !sender ||
+        !subject) return [];
+
+      return [sender, subject];
     }
 
     observePreferenceChanges() {
@@ -191,8 +214,11 @@
 
     removeUnreadEmphasis() {
       this.document.querySelector(REQUIRED_ANCHORS.workspace)
-        ?.querySelectorAll('[data-test-id="mail-row"]')
-        .forEach((row) => row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE));
+        ?.querySelectorAll('a[role="row"]')
+        .forEach((row) => {
+          row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
+          this.renderUnreadTextEmphasis(row, false);
+        });
     }
   }
 
