@@ -1,6 +1,6 @@
 # Manual acceptance guide
 
-Use a dedicated signed-in Yahoo Mail test account. Confirm the page is an Eligible Mail View before each check.
+Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verified Eligible Mail View at `https://mail.yahoo.com/n/folders/*` before each check.
 
 ## Setup
 

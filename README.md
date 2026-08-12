@@ -5,8 +5,8 @@ An independent, unofficial browser extension that provides focused visual improv
 ## Supported scope
 
 - Target browser: Chromium-based browsers using developer mode.
-- URL: `https://mail.yahoo.com/*`.
-- Eligible Mail Views only: the extension verifies the required Yahoo Mail structure before making page changes. Any unsupported route, non-mail workspace, or unverified layout is left unchanged.
+- Installation host: `https://mail.yahoo.com/*`.
+- Verified Eligible Mail Views: `https://mail.yahoo.com/n/folders/*` when the required Yahoo Mail structure is present. Any other route, non-mail workspace, or unverified layout is left unchanged.
 - Features: Sidebar Concealment with a Content Gutter, dark-mode Unread Emphasis, and a Popup with Current Page Status and quick controls.
 
 ## Install in developer mode

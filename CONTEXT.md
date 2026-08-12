@@ -44,6 +44,18 @@ _Avoid_: Any mail page, Mail tab
 The language used by extension controls and settings. The first release supports English and Traditional Chinese as used in Taiwan, with English as the fallback.
 _Avoid_: Locale, UI language
 
+**Popup**:
+The extension action panel that provides quick feature controls, current-page status, and links to its local policy information.
+_Avoid_: Settings page, menu
+
+**Current Page Status**:
+The Popup's report of whether the active browser page is an Eligible Mail View and which extension effects currently apply there.
+_Avoid_: Enabled status, extension status
+
+**Local Privacy Policy**:
+The extension-bundled offline page that explains its data boundary and independent status.
+_Avoid_: Privacy link, external privacy policy
+
 **Offline Operation**:
 The extension's mode of operation in which all interface changes and preferences remain on the device, without telemetry, analytics, error reporting, or remote network requests.
 _Avoid_: Private mode, local processing
