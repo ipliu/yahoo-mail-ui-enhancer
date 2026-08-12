@@ -7,6 +7,10 @@ const controllerSource = await readFile(
   new URL("../src/page-controller.js", import.meta.url),
   "utf8",
 );
+const preferencesSource = await readFile(
+  new URL("../src/preferences.js", import.meta.url),
+  "utf8",
+);
 const unreadStyles = await readFile(
   new URL("../src/sidebar-concealment.css", import.meta.url),
   "utf8",
@@ -14,6 +18,7 @@ const unreadStyles = await readFile(
 
 function loadPageController() {
   const context = { globalThis: {}, setTimeout };
+  vm.runInNewContext(preferencesSource, context);
   vm.runInNewContext(controllerSource, context);
   return context.globalThis.YahooMailUiEnhancer.PageController;
 }
@@ -332,6 +337,16 @@ test("leaves mail rows unchanged in a light Mail Theme Marker", async () => {
   const page = createMailDocument({ rows: [unread.row], theme: "light" });
 
   await new PageController(page.document, createStorage()).start();
+
+  assert.equal(unread.row.hasAttribute("data-yme-unread-emphasis"), false);
+});
+
+test("leaves mail rows unchanged when Unread Emphasis is disabled", async () => {
+  const PageController = loadPageController();
+  const unread = createMessageRow({ unread: true });
+  const page = createMailDocument({ rows: [unread.row] });
+
+  await new PageController(page.document, createStorage({ unreadEmphasis: false })).start();
 
   assert.equal(unread.row.hasAttribute("data-yme-unread-emphasis"), false);
 });

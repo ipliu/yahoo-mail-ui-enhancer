@@ -4,12 +4,13 @@
   "version": "0.1.0",
   "description": "Focused, offline visual improvements for the Supported Mail Interface.",
   "permissions": ["storage"],
+  "options_page": "settings.html",
   "host_permissions": ["https://mail.yahoo.com/*"],
   "content_scripts": [
     {
       "matches": ["https://mail.yahoo.com/*"],
       "css": ["src/sidebar-concealment.css"],
-      "js": ["src/page-controller.js"],
+      "js": ["src/preferences.js", "src/page-controller.js"],
       "run_at": "document_idle"
     }
   ]

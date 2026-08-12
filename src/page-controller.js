@@ -11,12 +11,8 @@
   const MANAGED_VIEW_ATTRIBUTE = "data-yme-mail-view";
   const SIDEBAR_CONCEALED_ATTRIBUTE = "data-yme-sidebar-concealed";
   const CONTENT_GUTTER_ATTRIBUTE = "data-yme-content-gutter";
-  const SIDEBAR_PREFERENCE_KEY = "sidebarConcealed";
   const UNREAD_EMPHASIS_ATTRIBUTE = "data-yme-unread-emphasis";
-
-  function getExtensionStorage() {
-    return global.browser?.storage ?? global["chr" + "ome"]?.storage;
-  }
+  const Preferences = global.YahooMailUiEnhancer?.Preferences;
 
   function isSupportedMailRoute(location) {
     return location.protocol === "https:" &&
@@ -38,12 +34,13 @@
   }
 
   class PageController {
-    constructor(document, storage = getExtensionStorage()?.local) {
+    constructor(document, storage = Preferences.getStorage()) {
       this.document = document;
       this.storage = storage;
-      this.preferenceChanges = storage?.onChanged ?? getExtensionStorage()?.onChanged;
+      this.preferenceChanges = storage?.onChanged ?? Preferences.getChangeEvents();
       this.isManagingView = false;
       this.isSidebarConcealed = true;
+      this.isUnreadEmphasisEnabled = true;
       this.observer = null;
       this.refreshScheduled = false;
       this.toggle = null;
@@ -51,8 +48,9 @@
     }
 
     async start() {
-      const preference = await this.storage?.get({ [SIDEBAR_PREFERENCE_KEY]: true });
-      this.isSidebarConcealed = preference?.[SIDEBAR_PREFERENCE_KEY] ?? true;
+      const preference = await this.storage?.get(Preferences.defaults);
+      this.isSidebarConcealed = preference?.sidebarConcealed ?? true;
+      this.isUnreadEmphasisEnabled = preference?.unreadEmphasis ?? true;
       this.observePreferenceChanges();
       const isVerified = this.refresh();
       this.observePageChanges();
@@ -118,7 +116,7 @@
 
     async toggleSidebar() {
       this.isSidebarConcealed = !this.isSidebarConcealed;
-      await this.storage?.set({ [SIDEBAR_PREFERENCE_KEY]: this.isSidebarConcealed });
+      await this.storage?.set({ sidebarConcealed: this.isSidebarConcealed });
       if (!this.refresh()) return;
 
       this.announcement.textContent = this.isSidebarConcealed
@@ -133,7 +131,7 @@
 
       for (const row of rows) {
         const isUnread = row.querySelector('[data-test-id="unread-indicator"]') !== null;
-        if (isDarkTheme && isUnread) {
+        if (this.isUnreadEmphasisEnabled && isDarkTheme && isUnread) {
           row.setAttribute(UNREAD_EMPHASIS_ATTRIBUTE, "true");
         } else {
           row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
@@ -143,10 +141,13 @@
 
     observePreferenceChanges() {
       this.preferenceChanges?.addListener((changes, areaName) => {
-        const preferenceChange = changes[SIDEBAR_PREFERENCE_KEY];
-        if (areaName !== "local" || !preferenceChange) return;
+        if (areaName !== "local") return;
+        const sidebarChange = changes.sidebarConcealed;
+        const unreadChange = changes.unreadEmphasis;
+        if (!sidebarChange && !unreadChange) return;
 
-        this.isSidebarConcealed = preferenceChange.newValue;
+        if (sidebarChange) this.isSidebarConcealed = sidebarChange.newValue;
+        if (unreadChange) this.isUnreadEmphasisEnabled = unreadChange.newValue;
         this.refresh();
       });
     }
@@ -195,7 +196,10 @@
     }
   }
 
-  global.YahooMailUiEnhancer = Object.freeze({ PageController });
+  global.YahooMailUiEnhancer = Object.freeze({
+    ...global.YahooMailUiEnhancer,
+    PageController,
+  });
 
   if (global.document) {
     new PageController(global.document).start();
