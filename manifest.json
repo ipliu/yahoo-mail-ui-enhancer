@@ -8,6 +8,7 @@
   "content_scripts": [
     {
       "matches": ["https://mail.yahoo.com/*"],
+      "css": ["src/sidebar-concealment.css"],
       "js": ["src/page-controller.js"],
       "run_at": "document_idle"
     }

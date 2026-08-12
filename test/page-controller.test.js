@@ -9,35 +9,77 @@ const controllerSource = await readFile(
 );
 
 function loadPageController() {
-  const context = { globalThis: {} };
+  const context = { globalThis: {}, setTimeout };
   vm.runInNewContext(controllerSource, context);
   return context.globalThis.YahooMailUiEnhancer.PageController;
 }
 
 function createElement() {
   const attributes = new Map();
+  const listeners = new Map();
   return {
+    children: [],
     contains(other) {
       return other === this || this.children.includes(other);
     },
-    children: [],
+    append(...children) {
+      this.children.push(...children);
+    },
+    remove() {
+      this.removed = true;
+    },
+    addEventListener(type, listener) {
+      listeners.set(type, listener);
+    },
+    async dispatch(type, event = {}) {
+      return listeners.get(type)?.({ preventDefault() {}, key: "", ...event });
+    },
     getAttribute(name) {
       return attributes.get(name) ?? null;
     },
     hasAttribute(name) {
       return attributes.has(name);
     },
+    removeAttribute(name) {
+      attributes.delete(name);
+    },
     setAttribute(name, value) {
       attributes.set(name, String(value));
     },
-    removeAttribute(name) {
-      attributes.delete(name);
+    toggleAttribute(name, force) {
+      if (force) attributes.set(name, "");
+      else attributes.delete(name);
+    },
+  };
+}
+
+function createStorage(values = {}) {
+  const listeners = new Set();
+  return {
+    values,
+    async get(defaults) {
+      return { ...defaults, ...this.values };
+    },
+    async set(nextValues) {
+      const changes = Object.fromEntries(
+        Object.entries(nextValues).map(([key, newValue]) => [key, {
+          oldValue: this.values[key],
+          newValue,
+        }]),
+      );
+      Object.assign(this.values, nextValues);
+      for (const listener of listeners) listener(changes, "local");
+    },
+    onChanged: {
+      addListener(listener) {
+        listeners.add(listener);
+      },
     },
   };
 }
 
 function createMailDocument({
-  url,
+  url = "https://mail.yahoo.com/d/folders/1",
   includeSidebar = true,
   includeWorkspace = true,
   sidebarInApplication = true,
@@ -47,9 +89,11 @@ function createMailDocument({
   const mainContent = createElement();
   const sidebar = createElement();
   const workspace = createElement();
-  application.children.push(toolbar, mainContent);
-  if (includeWorkspace) application.children.push(workspace);
-  if (includeSidebar && sidebarInApplication) application.children.push(sidebar);
+  const documentElement = createElement();
+  application.append(toolbar);
+  application.append(mainContent);
+  if (includeWorkspace) application.append(workspace);
+  if (includeSidebar && sidebarInApplication) application.append(sidebar);
 
   const anchors = new Map([
     ['[data-test-id="mail-app"]', application],
@@ -60,81 +104,161 @@ function createMailDocument({
   ]);
 
   return {
-    documentElement: createElement(),
-    location: new URL(url),
-    querySelector(selector) {
-      return anchors.get(selector) ?? null;
+    application,
+    document: {
+      documentElement,
+      location: new URL(url),
+      createElement,
+      querySelector(selector) {
+        return anchors.get(selector) ?? null;
+      },
     },
+    mainContent,
+    sidebar,
+    toolbar,
   };
 }
 
-test("marks a verified Eligible Mail View as extension-managed", () => {
+function findToggle(toolbar) {
+  return toolbar.children.find(
+    (child) => child.getAttribute("data-yme-sidebar-toggle") === "true",
+  );
+}
+
+function findAnnouncement(toolbar) {
+  return toolbar.children.find(
+    (child) => child.getAttribute("data-yme-sidebar-announcement") === "true",
+  );
+}
+
+test("conceals the Mail Sidebar by default without replacing it", async () => {
   const PageController = loadPageController();
-  const document = createMailDocument({ url: "https://mail.yahoo.com/d/folders/1" });
+  const page = createMailDocument({});
+  const controller = new PageController(page.document, createStorage());
 
-  const controller = new PageController(document);
-  controller.start();
+  await controller.start();
 
-  assert.equal(document.documentElement.getAttribute("data-yme-mail-view"), "verified");
+  assert.equal(page.document.documentElement.getAttribute("data-yme-sidebar-concealed"), "true");
+  assert.equal(page.mainContent.getAttribute("data-yme-content-gutter"), "true");
+  assert.equal(page.sidebar.removed, undefined);
+  assert.equal(findToggle(page.toolbar).getAttribute("aria-pressed"), "true");
 });
 
-test("leaves an unsupported route unchanged", () => {
+test("Sidebar Toggle restores and conceals the existing Mail Sidebar", async () => {
   const PageController = loadPageController();
-  const document = createMailDocument({ url: "https://mail.yahoo.com/calendar" });
-  document.documentElement.setAttribute("data-yahoo-state", "unchanged");
+  const page = createMailDocument({});
+  const controller = new PageController(page.document, createStorage());
+  await controller.start();
+  const toggle = findToggle(page.toolbar);
 
-  const controller = new PageController(document);
-  controller.start();
+  await toggle.dispatch("click");
+  assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+  assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
+  assert.equal(page.sidebar.removed, undefined);
+  assert.equal(toggle.getAttribute("aria-pressed"), "false");
+  assert.equal(findAnnouncement(page.toolbar).textContent, "Mail Sidebar restored");
 
-  assert.equal(document.documentElement.hasAttribute("data-yme-mail-view"), false);
-  assert.equal(document.documentElement.getAttribute("data-yahoo-state"), "unchanged");
+  await toggle.dispatch("click", { detail: 0 });
+  assert.equal(page.document.documentElement.getAttribute("data-yme-sidebar-concealed"), "true");
+  assert.equal(toggle.getAttribute("aria-pressed"), "true");
 });
 
-test("leaves a page with an altered anchor unchanged", () => {
+test("restores the device-local Sidebar Preference in another supported tab", async () => {
   const PageController = loadPageController();
-  const document = createMailDocument({
-    url: "https://mail.yahoo.com/d/folders/1",
-    includeSidebar: false,
-  });
+  const storage = createStorage();
+  const firstPage = createMailDocument({});
+  const firstController = new PageController(firstPage.document, storage);
+  await firstController.start();
+  await findToggle(firstPage.toolbar).dispatch("click");
 
-  const controller = new PageController(document);
-  controller.start();
+  const secondPage = createMailDocument({});
+  await new PageController(secondPage.document, storage).start();
 
-  assert.equal(document.documentElement.hasAttribute("data-yme-mail-view"), false);
+  assert.equal(secondPage.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+  assert.equal(findToggle(secondPage.toolbar).getAttribute("aria-pressed"), "false");
 });
 
-test("leaves a structurally similar non-mail workspace unchanged", () => {
+test("synchronizes Sidebar Preference to an already open supported tab", async () => {
   const PageController = loadPageController();
-  const document = createMailDocument({
+  const storage = createStorage();
+  const firstPage = createMailDocument({});
+  const secondPage = createMailDocument({});
+  await new PageController(firstPage.document, storage).start();
+  await new PageController(secondPage.document, storage).start();
+
+  await findToggle(firstPage.toolbar).dispatch("click");
+
+  assert.equal(secondPage.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+  assert.equal(findToggle(secondPage.toolbar).getAttribute("aria-pressed"), "false");
+});
+
+test("leaves unsupported pages unchanged", async () => {
+  const PageController = loadPageController();
+  const page = createMailDocument({ url: "https://mail.yahoo.com/calendar" });
+  page.document.documentElement.setAttribute("data-yahoo-state", "unchanged");
+
+  await new PageController(page.document, createStorage()).start();
+
+  assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+  assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
+  assert.equal(findToggle(page.toolbar), undefined);
+  assert.equal(page.document.documentElement.getAttribute("data-yahoo-state"), "unchanged");
+});
+
+test("leaves pages with missing or altered mail anchors unchanged", async () => {
+  const PageController = loadPageController();
+  const cases = [
+    createMailDocument({ includeSidebar: false }),
+    createMailDocument({ includeWorkspace: false }),
+    createMailDocument({ sidebarInApplication: false }),
+  ];
+
+  for (const page of cases) {
+    await new PageController(page.document, createStorage()).start();
+
+    assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+    assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
+    assert.equal(findToggle(page.toolbar), undefined);
+  }
+});
+
+test("leaves a non-mail workspace unchanged", async () => {
+  const PageController = loadPageController();
+  const page = createMailDocument({
     url: "https://mail.yahoo.com/d/calendar",
     includeWorkspace: false,
   });
 
-  new PageController(document).start();
+  await new PageController(page.document, createStorage()).start();
 
-  assert.equal(document.documentElement.hasAttribute("data-yme-mail-view"), false);
+  assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+  assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
+  assert.equal(findToggle(page.toolbar), undefined);
 });
 
-test("leaves a page with an altered anchor hierarchy unchanged", () => {
+test("keeps one Sidebar Toggle after an idempotent refresh", async () => {
   const PageController = loadPageController();
-  const document = createMailDocument({
-    url: "https://mail.yahoo.com/d/folders/1",
-    sidebarInApplication: false,
-  });
-
-  new PageController(document).start();
-
-  assert.equal(document.documentElement.hasAttribute("data-yme-mail-view"), false);
-});
-
-test("removes extension-owned state when the Eligible Mail View disappears", () => {
-  const PageController = loadPageController();
-  const document = createMailDocument({ url: "https://mail.yahoo.com/d/folders/1" });
-  const controller = new PageController(document);
-  controller.start();
-  document.location = new URL("https://mail.yahoo.com/calendar");
+  const page = createMailDocument({});
+  const controller = new PageController(page.document, createStorage());
+  await controller.start();
 
   controller.refresh();
 
-  assert.equal(document.documentElement.hasAttribute("data-yme-mail-view"), false);
+  assert.equal(page.toolbar.children.filter(
+    (child) => child.getAttribute("data-yme-sidebar-toggle") === "true",
+  ).length, 1);
+});
+
+test("removes Sidebar Concealment when the Eligible Mail View disappears", async () => {
+  const PageController = loadPageController();
+  const page = createMailDocument({});
+  const controller = new PageController(page.document, createStorage());
+  await controller.start();
+  page.document.location = new URL("https://mail.yahoo.com/calendar");
+
+  controller.refresh();
+
+  assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+  assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
+  assert.equal(findToggle(page.toolbar).removed, true);
 });

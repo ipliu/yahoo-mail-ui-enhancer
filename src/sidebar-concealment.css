@@ -1,0 +1,19 @@
+html[data-yme-sidebar-concealed="true"] [data-test-id="mail-sidebar"] {
+  display: none !important;
+}
+
+[data-yme-content-gutter="true"] {
+  flex: 1 1 auto;
+  margin-inline-end: clamp(1rem, 3vw, 3rem);
+}
+
+[data-yme-sidebar-toggle="true"] {
+  appearance: none;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  color: inherit;
+  cursor: pointer;
+  min-height: 2rem;
+  min-width: 2rem;
+}
