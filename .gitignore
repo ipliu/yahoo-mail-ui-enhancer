@@ -1,0 +1,12 @@
+# Dependencies and test output
+node_modules/
+coverage/
+
+# Packaged extension artifacts
+dist/
+build/
+
+# Local environment files
+.DS_Store
+.idea/
+.vscode/
