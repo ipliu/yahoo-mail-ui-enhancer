@@ -7,10 +7,10 @@
       unreadEmphasis: true,
     }),
     getStorage() {
-      return global.browser?.storage?.local ?? global["chr" + "ome"]?.storage?.local;
+      return global.browser?.storage?.local ?? global.chrome?.storage?.local;
     },
     getChangeEvents() {
-      return global.browser?.storage?.onChanged ?? global["chr" + "ome"]?.storage?.onChanged;
+      return global.browser?.storage?.onChanged ?? global.chrome?.storage?.onChanged;
     },
   });
 
