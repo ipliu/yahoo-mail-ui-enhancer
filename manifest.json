@@ -7,7 +7,9 @@
     "128": "assets/icon-128.png"
   },
   "permissions": ["storage"],
-  "options_page": "settings.html",
+  "action": {
+    "default_popup": "popup.html"
+  },
   "host_permissions": ["https://mail.yahoo.com/*"],
   "content_scripts": [
     {

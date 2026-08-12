@@ -12,6 +12,15 @@
     getChangeEvents() {
       return global.browser?.storage?.onChanged ?? global.chrome?.storage?.onChanged;
     },
+    getRuntime() {
+      return global.browser?.runtime ?? global.chrome?.runtime;
+    },
+    getTabs() {
+      return global.browser?.tabs ?? global.chrome?.tabs;
+    },
+    resolveDisplayLanguage(displayLanguage) {
+      return displayLanguage === "zh-TW" ? "zh-TW" : "en";
+    },
   });
 
   global.YahooMailUiEnhancer = Object.freeze({

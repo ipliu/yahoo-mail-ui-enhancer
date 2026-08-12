@@ -14,6 +14,14 @@ test("includes an original local extension icon in the developer-mode package", 
   await access(new URL(`../${manifest.icons["128"]}`, import.meta.url));
 });
 
+test("uses a toolbar Popup instead of an extension settings page", async () => {
+  assert.equal(manifest.options_page, undefined);
+  assert.equal(manifest.action.default_popup, "popup.html");
+  assert.equal(manifest.permissions.includes("tabs"), false);
+  assert.equal(manifest.permissions.includes("activeTab"), false);
+  await access(new URL("../popup.html", import.meta.url));
+});
+
 test("documents developer-mode scope, limitations, privacy, and manual acceptance", () => {
   assert.match(readme, /Developer mode/);
   assert.match(readme, /independent, unofficial/i);

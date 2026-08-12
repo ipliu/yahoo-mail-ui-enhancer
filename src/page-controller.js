@@ -13,6 +13,11 @@
   const CONTENT_GUTTER_ATTRIBUTE = "data-yme-content-gutter";
   const UNREAD_EMPHASIS_ATTRIBUTE = "data-yme-unread-emphasis";
   const Preferences = global.YahooMailUiEnhancer?.Preferences;
+  const COPY = Object.freeze({
+    en: { show: "Show Mail Sidebar", hide: "Hide Mail Sidebar", concealed: "Mail Sidebar concealed", restored: "Mail Sidebar restored" },
+    "zh-TW": { show: "顯示郵件側欄", hide: "隱藏郵件側欄", concealed: "郵件側欄已隱藏", restored: "郵件側欄已顯示" },
+  });
+
 
   function isSupportedMailRoute(location) {
     return location.protocol === "https:" &&
@@ -45,6 +50,7 @@
       this.refreshScheduled = false;
       this.toggle = null;
       this.announcement = null;
+      this.runtime = Preferences.getRuntime();
     }
 
     async start() {
@@ -54,6 +60,7 @@
       this.observePreferenceChanges();
       const isVerified = this.refresh();
       this.observePageChanges();
+      this.observeStatusRequests();
       return isVerified;
     }
 
@@ -70,6 +77,7 @@
       this.isManagingView = true;
       this.renderSidebarConcealment(anchors);
       this.renderUnreadEmphasis(anchors);
+      this.notifyStatusChange();
       return true;
     }
 
@@ -108,10 +116,8 @@
 
     updateSidebarToggle() {
       this.toggle.setAttribute("aria-pressed", String(this.isSidebarConcealed));
-      this.toggle.setAttribute(
-        "aria-label",
-        this.isSidebarConcealed ? "Show Mail Sidebar" : "Hide Mail Sidebar",
-      );
+      const copy = COPY[Preferences.resolveDisplayLanguage(global.navigator?.language)];
+      this.toggle.setAttribute("aria-label", this.isSidebarConcealed ? copy.show : copy.hide);
     }
 
     async toggleSidebar() {
@@ -119,9 +125,8 @@
       await this.storage?.set({ sidebarConcealed: this.isSidebarConcealed });
       if (!this.refresh()) return;
 
-      this.announcement.textContent = this.isSidebarConcealed
-        ? "Mail Sidebar concealed"
-        : "Mail Sidebar restored";
+      const copy = COPY[Preferences.resolveDisplayLanguage(global.navigator?.language)];
+      this.announcement.textContent = this.isSidebarConcealed ? copy.concealed : copy.restored;
     }
 
     renderUnreadEmphasis(anchors) {
@@ -203,6 +208,7 @@
       this.removeUnreadEmphasis();
       this.removeSidebarToggle();
       this.isManagingView = false;
+      this.notifyStatusChange();
     }
 
     removeSidebarToggle() {
@@ -219,6 +225,33 @@
           row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
           this.renderUnreadTextEmphasis(row, false);
         });
+    }
+
+    getCurrentPageStatus() {
+      if (!this.isManagingView) return { state: "not-supported" };
+      const isDarkTheme = this.document.body?.getAttribute("data-color-scheme") === "dark";
+      return {
+        state: this.isUnreadEmphasisEnabled && !isDarkTheme ? "light-mode" : "active",
+        sidebar: this.isSidebarConcealed ? "concealed" : "shown",
+        unread: !this.isUnreadEmphasisEnabled ? "disabled" : isDarkTheme ? "active" : "light-mode",
+      };
+    }
+
+    notifyStatusChange() {
+      try {
+        this.runtime?.sendMessage?.({ type: "yme-page-status", status: this.getCurrentPageStatus() })
+          ?.catch?.(() => {});
+      } catch {
+        // No Popup listener is expected while the Popup is closed.
+      }
+    }
+
+    observeStatusRequests() {
+      this.runtime?.onMessage?.addListener?.((message, sender, sendResponse) => {
+        if (message?.type !== "yme-get-page-status") return undefined;
+        sendResponse(this.getCurrentPageStatus());
+        return undefined;
+      });
     }
   }
 

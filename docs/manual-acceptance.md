@@ -5,7 +5,7 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is an Eligib
 ## Setup
 
 1. Load the repository through developer mode as described in the README.
-2. Open the extension settings page and enable both features.
+2. Open the extension Popup from the browser toolbar and enable both features.
 3. Keep browser developer tools available to observe unexpected errors, but do not inspect or alter message data.
 
 ## Sidebar Concealment
@@ -15,6 +15,16 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is an Eligib
 - Restore the Mail Sidebar and confirm its native controls and contents remain intact.
 - Reload the tab and open another supported tab. Confirm the Sidebar Preference persists in both.
 - Repeat in a message-reading workspace.
+
+## Popup and Current Page Status
+
+- In a dark Eligible Mail View, open the Popup and confirm Current Page Status is `Active`, Mail Sidebar reports `Concealed` or `Shown`, and Unread Emphasis reports `Active`.
+- In a light Eligible Mail View, confirm the Popup reports that Unread Emphasis is unavailable in light mode while the Mail Sidebar status remains accurate.
+- Toggle each feature in the Popup. Confirm the effect applies immediately in the current tab and every already open Eligible Mail View.
+- While the Popup is open, change folders or the Yahoo Mail theme. Confirm Current Page Status updates without reopening the Popup.
+- Open the Popup on a non-Yahoo page and an unsupported Yahoo Mail route. Confirm it displays `Not supported here`, keeps both controls available, and does not change the page.
+- Verify English and Traditional Chinese (Taiwan) browser language preferences. Confirm Popup copy and Sidebar Toggle accessible names use the selected Display Language.
+- Select `Privacy` and confirm the Local Privacy Policy opens from the extension package without a network request.
 
 ## Unread Emphasis
 

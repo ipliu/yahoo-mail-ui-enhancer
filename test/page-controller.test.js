@@ -342,6 +342,19 @@ test("leaves mail rows unchanged in a light Mail Theme Marker", async () => {
   assert.equal(unread.row.hasAttribute("data-yme-unread-emphasis"), false);
 });
 
+test("reports light mode while preserving the actual Mail Sidebar status", async () => {
+  const PageController = loadPageController();
+  const page = createMailDocument({ theme: "light" });
+  const controller = new PageController(page.document, createStorage());
+
+  await controller.start();
+
+  const status = controller.getCurrentPageStatus();
+  assert.equal(status.state, "light-mode");
+  assert.equal(status.sidebar, "concealed");
+  assert.equal(status.unread, "light-mode");
+});
+
 test("leaves mail rows unchanged when Unread Emphasis is disabled", async () => {
   const PageController = loadPageController();
   const unread = createMessageRow({ unread: true });

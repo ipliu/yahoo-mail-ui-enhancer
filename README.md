@@ -7,7 +7,7 @@ An independent, unofficial browser extension that provides focused visual improv
 - Target browser: Chromium-based browsers using developer mode.
 - URL: `https://mail.yahoo.com/*`.
 - Eligible Mail Views only: the extension verifies the required Yahoo Mail structure before making page changes. Any unsupported route, non-mail workspace, or unverified layout is left unchanged.
-- Features: Sidebar Concealment with a Content Gutter, and dark-mode Unread Emphasis.
+- Features: Sidebar Concealment with a Content Gutter, dark-mode Unread Emphasis, and a Popup with Current Page Status and quick controls.
 
 ## Install in developer mode
 
@@ -21,6 +21,10 @@ An independent, unofficial browser extension that provides focused visual improv
 ## Privacy and offline operation
 
 The extension stores Sidebar Preference and feature preferences only on the current device. It makes no remote network requests and includes no telemetry, analytics, error reporting, remote configuration, or third-party runtime code. See the [Privacy Policy](privacy.html).
+
+## Popup
+
+Open the extension's toolbar icon to use the Popup. It shows whether the current page is an Eligible Mail View and reports the actual Mail Sidebar and Unread Emphasis effects. Both feature controls remain available on unsupported pages and apply as soon as a supported Yahoo Mail tab is open. The Popup follows the browser theme and is available in English and Traditional Chinese (Taiwan).
 
 ## Known limitations
 
