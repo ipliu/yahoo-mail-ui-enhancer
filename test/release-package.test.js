@@ -1,0 +1,26 @@
+import assert from "node:assert/strict";
+import { access, readFile } from "node:fs/promises";
+import test from "node:test";
+
+const manifest = JSON.parse(await readFile(new URL("../manifest.json", import.meta.url), "utf8"));
+const readme = await readFile(new URL("../README.md", import.meta.url), "utf8");
+const acceptanceGuide = await readFile(
+  new URL("../docs/manual-acceptance.md", import.meta.url),
+  "utf8",
+);
+
+test("includes an original local extension icon in the developer-mode package", async () => {
+  assert.equal(manifest.icons["128"], "assets/icon-128.png");
+  await access(new URL(`../${manifest.icons["128"]}`, import.meta.url));
+});
+
+test("documents developer-mode scope, limitations, privacy, and manual acceptance", () => {
+  assert.match(readme, /Developer mode/);
+  assert.match(readme, /independent, unofficial/i);
+  assert.match(readme, /offline/i);
+  assert.match(readme, /Store submission.*out of scope/i);
+  assert.match(acceptanceGuide, /light mode/i);
+  assert.match(acceptanceGuide, /dark mode/i);
+  assert.match(acceptanceGuide, /narrow/i);
+  assert.match(acceptanceGuide, /unsupported/i);
+});
