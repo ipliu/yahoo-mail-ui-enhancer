@@ -17,3 +17,12 @@ html[data-yme-sidebar-concealed="true"] [data-test-id="mail-sidebar"] {
   min-height: 2rem;
   min-width: 2rem;
 }
+
+[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) [data-test-id="mail-sender"],
+[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) [data-test-id="mail-subject"] {
+  font-weight: 600;
+}

@@ -12,6 +12,7 @@
   const SIDEBAR_CONCEALED_ATTRIBUTE = "data-yme-sidebar-concealed";
   const CONTENT_GUTTER_ATTRIBUTE = "data-yme-content-gutter";
   const SIDEBAR_PREFERENCE_KEY = "sidebarConcealed";
+  const UNREAD_EMPHASIS_ATTRIBUTE = "data-yme-unread-emphasis";
 
   function getExtensionStorage() {
     return global.browser?.storage ?? global["chr" + "ome"]?.storage;
@@ -70,6 +71,7 @@
       }
       this.isManagingView = true;
       this.renderSidebarConcealment(anchors);
+      this.renderUnreadEmphasis(anchors);
       return true;
     }
 
@@ -124,6 +126,21 @@
         : "Mail Sidebar restored";
     }
 
+    renderUnreadEmphasis(anchors) {
+      const rows = anchors.workspace.querySelectorAll('[data-test-id="mail-row"]');
+      const themeMarker = this.document.querySelector('[data-test-id="mail-theme-marker"]');
+      const isDarkTheme = themeMarker?.getAttribute("data-theme") === "dark";
+
+      for (const row of rows) {
+        const isUnread = row.querySelector('[data-test-id="unread-indicator"]') !== null;
+        if (isDarkTheme && isUnread) {
+          row.setAttribute(UNREAD_EMPHASIS_ATTRIBUTE, "true");
+        } else {
+          row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
+        }
+      }
+    }
+
     observePreferenceChanges() {
       this.preferenceChanges?.addListener((changes, areaName) => {
         const preferenceChange = changes[SIDEBAR_PREFERENCE_KEY];
@@ -159,6 +176,7 @@
       this.document.documentElement.removeAttribute(SIDEBAR_CONCEALED_ATTRIBUTE);
       this.document.querySelector(REQUIRED_ANCHORS.mainContent)
         ?.removeAttribute(CONTENT_GUTTER_ATTRIBUTE);
+      this.removeUnreadEmphasis();
       this.removeSidebarToggle();
       this.isManagingView = false;
     }
@@ -168,6 +186,12 @@
       this.announcement?.remove();
       this.toggle = null;
       this.announcement = null;
+    }
+
+    removeUnreadEmphasis() {
+      this.document.querySelector(REQUIRED_ANCHORS.workspace)
+        ?.querySelectorAll('[data-test-id="mail-row"]')
+        .forEach((row) => row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE));
     }
   }
 
