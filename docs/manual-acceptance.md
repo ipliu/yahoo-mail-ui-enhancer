@@ -45,3 +45,10 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 ## Release decision
 
 Record the browser version, test-account date, light and dark theme outcomes, narrow viewport result, and every failure before sharing a developer-mode build.
+
+## Chrome Web Store package
+
+1. Run `./release.sh` from the repository root.
+2. Confirm `dist/yahoo-mail-ui-enhancer-<version>.zip` contains `manifest.json` at its root.
+3. Confirm the ZIP contains no Git metadata, source maps, test files, or secret files.
+4. Load the exact ZIP contents as an unpacked extension and repeat the applicable checks above before uploading the ZIP to the Chrome Web Store.
