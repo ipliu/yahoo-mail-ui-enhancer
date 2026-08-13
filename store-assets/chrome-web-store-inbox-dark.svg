@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
+  <rect width="1280" height="800" fill="#101827"/>
+  <rect x="0" y="0" width="1280" height="76" fill="#182235"/>
+  <circle cx="42" cy="38" r="18" fill="#6b5cf6"/>
+  <path d="M33 35h18v10H33z" fill="#fff"/><path d="m33 35 9 7 9-7" fill="none" stroke="#6b5cf6" stroke-width="2"/>
+  <text x="74" y="45" fill="#fff" font-family="Arial, sans-serif" font-size="22" font-weight="700">Yahoo Mail</text>
+  <rect x="315" y="18" width="470" height="40" rx="20" fill="#27344a"/>
+  <circle cx="341" cy="38" r="7" fill="none" stroke="#b9c4d4" stroke-width="2"/><path d="m346 43 6 6" stroke="#b9c4d4" stroke-width="2"/>
+  <text x="369" y="44" fill="#b9c4d4" font-family="Arial, sans-serif" font-size="15">搜尋郵件</text>
+  <circle cx="1206" cy="38" r="18" fill="#7667e8"/><text x="1199" y="44" fill="#fff" font-family="Arial, sans-serif" font-size="15" font-weight="700">B</text>
+  <rect x="0" y="76" width="228" height="724" fill="#141e2e"/>
+  <rect x="20" y="96" width="188" height="42" rx="21" fill="#6b5cf6"/>
+  <text x="72" y="122" fill="#fff" font-family="Arial, sans-serif" font-size="16" font-weight="700">撰寫郵件</text>
+  <g font-family="Arial, sans-serif" font-size="15" fill="#c4cedd"><text x="55" y="180" fill="#fff" font-weight="700">收件匣</text><text x="55" y="221">未讀取</text><text x="55" y="262">已加星號</text><text x="55" y="303">草稿</text><text x="55" y="362" fill="#8f9db2" font-size="13">資料夾</text><text x="55" y="402">已寄出郵件</text><text x="55" y="443">封存</text></g>
+  <g fill="#9aa9bf"><path d="M30 166h14v12H30z"/><circle cx="37" cy="216" r="7"/><path d="M30 254h14v12H30z"/><path d="M30 294h14v12H30z"/></g>
+  <rect x="228" y="76" width="1052" height="724" fill="#101827"/>
+  <rect x="252" y="96" width="976" height="54" rx="10" fill="#182235"/>
+  <text x="278" y="130" fill="#fff" font-family="Arial, sans-serif" font-size="21" font-weight="700">收件匣</text>
+  <text x="1130" y="129" fill="#aebbd0" font-family="Arial, sans-serif" font-size="14">1–50 封，共 124 封</text>
+  <rect x="252" y="164" width="976" height="60" rx="8" fill="#24344d" stroke="#4d6688"/>
+  <circle cx="279" cy="194" r="8" fill="none" stroke="#abb9ce" stroke-width="2"/><circle cx="310" cy="194" r="7" fill="#6b5cf6"/>
+  <text x="338" y="190" fill="#fff" font-family="Arial, sans-serif" font-size="16" font-weight="700">產品團隊</text><text x="466" y="190" fill="#fff" font-family="Arial, sans-serif" font-size="16" font-weight="700">本週產品更新與重要事項</text><text x="338" y="212" fill="#b9c6d8" font-family="Arial, sans-serif" font-size="14">所有變更摘要已整理在這封信中。</text><text x="1162" y="194" fill="#c7d3e4" font-family="Arial, sans-serif" font-size="13">上午 10:24</text>
+  <g font-family="Arial, sans-serif"><rect x="252" y="232" width="976" height="60" rx="8" fill="#182235"/><text x="338" y="258" fill="#dce5f2" font-size="16">設計週報</text><text x="466" y="258" fill="#dce5f2" font-size="16">八月設計評審邀請</text><text x="338" y="280" fill="#91a1b7" font-size="14">一起確認最新介面方向與回饋。</text><text x="1169" y="263" fill="#91a1b7" font-size="13">昨天</text>
+  <rect x="252" y="300" width="976" height="60" rx="8" fill="#24344d" stroke="#4d6688"/><circle cx="310" cy="330" r="7" fill="#6b5cf6"/><text x="338" y="326" fill="#fff" font-size="16" font-weight="700">帳務通知</text><text x="466" y="326" fill="#fff" font-size="16" font-weight="700">您的每月帳單已準備完成</text><text x="338" y="348" fill="#b9c6d8" font-size="14">請在到期日前檢視帳單明細。</text><text x="1169" y="331" fill="#c7d3e4" font-size="13">週二</text>
+  <rect x="252" y="368" width="976" height="60" rx="8" fill="#182235"/><text x="338" y="394" fill="#dce5f2" font-size="16">旅行規劃</text><text x="466" y="394" fill="#dce5f2" font-size="16">行程建議與住宿資訊</text><text x="338" y="416" fill="#91a1b7" font-size="14">已為你整理好下次出發的選項。</text><text x="1169" y="399" fill="#91a1b7" font-size="13">週一</text></g>
+  <rect x="252" y="464" width="976" height="210" rx="12" fill="#182235"/>
+  <text x="282" y="508" fill="#fff" font-family="Arial, sans-serif" font-size="24" font-weight="700">更專注地處理信件</text>
+  <text x="282" y="544" fill="#b9c6d8" font-family="Arial, sans-serif" font-size="17">隱藏右側欄，讓郵件工作區更寬敞；</text><text x="282" y="573" fill="#b9c6d8" font-family="Arial, sans-serif" font-size="17">在深色模式中，更清楚地辨識未讀訊息。</text>
+  <rect x="282" y="602" width="214" height="40" rx="20" fill="#6b5cf6"/><text x="313" y="628" fill="#fff" font-family="Arial, sans-serif" font-size="15" font-weight="700">Yahoo Mail UI Enhancer</text>
+  <rect x="252" y="704" width="976" height="72" rx="10" fill="#213252"/>
+  <circle cx="287" cy="740" r="16" fill="#6b5cf6"/><path d="M279 737h16v9h-16z" fill="#fff"/><text x="315" y="736" fill="#fff" font-family="Arial, sans-serif" font-size="16" font-weight="700">深色模式未讀信強調</text><text x="315" y="757" fill="#b9c6d8" font-family="Arial, sans-serif" font-size="14">保留原有未讀標記，讓重要訊息更容易掃讀。</text>
+</svg>
