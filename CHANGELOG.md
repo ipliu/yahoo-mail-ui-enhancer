@@ -11,6 +11,7 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- Clarified that dark-mode Unread Emphasis uses a `#3A4963` row background while preserving Yahoo's native unread text weight.
 - Restricted automatic privacy-policy deployments to policy, policy-icon, and deployment-workflow changes.
 - Required GitHub Issues, pull requests, and related tracker content to be written in English.
 

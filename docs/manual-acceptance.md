@@ -29,7 +29,7 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 
 ## Unread Emphasis
 
-- In dark mode, confirm unread message rows have restrained emphasis on their background, sender, and subject.
+- In dark mode, confirm unread message rows have the `#3A4963` background treatment, while their senders and subjects retain Yahoo's native `font-weight: 600`.
 - Confirm the native unread dot, preview, date, attachments, and labels are unchanged.
 - Confirm read rows are unchanged.
 - In light mode, confirm no Unread Emphasis is visible.
