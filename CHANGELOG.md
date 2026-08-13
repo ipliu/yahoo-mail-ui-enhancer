@@ -1,0 +1,18 @@
+# Changelog
+
+All notable changes to this project are documented in this file.
+
+## [0.2.3] - 2026-08-13
+
+### Added
+
+- Added a toolbar Popup with quick controls and Current Page Status for Eligible Mail Views.
+- Added an original extension icon and an expanded Local Privacy Policy page.
+
+### Fixed
+
+- Made Popup preference changes refresh the current and other open Eligible Mail Views immediately through the global local-storage change event.
+
+### Changed
+
+- Clarified Popup status guidance and developer-mode documentation.
