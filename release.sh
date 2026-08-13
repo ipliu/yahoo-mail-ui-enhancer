@@ -29,6 +29,7 @@ zip -qr "$archive_path" . \
   -x 'build/*' \
   -x 'node_modules/*' \
   -x 'coverage/*' \
+  -x 'docs/*' \
   -x 'test/*' \
   -x 'tests/*' \
   -x '*.test.js' \
