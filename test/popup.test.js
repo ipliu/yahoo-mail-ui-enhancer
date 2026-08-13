@@ -38,18 +38,6 @@ function createRuntime() {
   return { onMessage: { addListener(listener) { listeners.add(listener); } }, emit(message, sender) { for (const listener of listeners) listener(message, sender); } };
 }
 
-function createTabs(status) {
-  const messages = [];
-  return {
-    messages,
-    async query() { return [{ id: 42 }]; },
-    async sendMessage(tabId, message) {
-      messages.push({ message, tabId });
-      return message.type === "yme-get-page-status" ? status : undefined;
-    },
-  };
-}
-
 test("shows actual effects and immediately persists Popup controls", async () => {
   const { setupPopup } = loadPopup();
   const document = createPopupDocument();
@@ -67,20 +55,23 @@ test("shows actual effects and immediately persists Popup controls", async () =>
   assert.equal(storage.values.sidebarConcealed, true);
 });
 
-test("applies a Popup preference change immediately to the active Eligible Mail View", async () => {
+test("does not send a preference message to the active page", async () => {
   const { setupPopup } = loadPopup();
   const document = createPopupDocument();
-  const tabs = createTabs({ state: "active", sidebar: "shown", unread: "active" });
-  const storage = createStorage({ sidebarConcealed: false, unreadEmphasis: true });
+  const messages = [];
+  const tabs = {
+    async query() { return [{ id: 42 }]; },
+    async sendMessage(tabId, message) {
+      messages.push({ tabId, type: message.type });
+      return { state: "active", sidebar: "concealed", unread: "active" };
+    },
+  };
 
-  await setupPopup(document, storage, createRuntime(), tabs, "en-US");
-  document.elements.get("sidebar-concealment").checked = true;
+  await setupPopup(document, createStorage(), createRuntime(), tabs, "en-US");
+  document.elements.get("sidebar-concealment").checked = false;
   await document.elements.get("sidebar-concealment").dispatch("change");
 
-  const message = tabs.messages.at(-1);
-  assert.equal(message.tabId, 42);
-  assert.equal(message.message.type, "yme-apply-preferences");
-  assert.equal(message.message.preferences.sidebarConcealed, true);
+  assert.deepEqual(messages, [{ tabId: 42, type: "yme-get-page-status" }]);
 });
 
 test("reports unsupported pages while keeping Traditional Chinese controls available", async () => {

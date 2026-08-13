@@ -39,10 +39,14 @@
   }
 
   class PageController {
-    constructor(document, storage = Preferences.getStorage()) {
+    constructor(
+      document,
+      storage = Preferences.getStorage(),
+      preferenceChanges = Preferences.getChangeEvents(),
+    ) {
       this.document = document;
       this.storage = storage;
-      this.preferenceChanges = storage?.onChanged ?? Preferences.getChangeEvents();
+      this.preferenceChanges = preferenceChanges;
       this.isManagingView = false;
       this.isSidebarConcealed = true;
       this.isUnreadEmphasisEnabled = true;
@@ -252,22 +256,8 @@
           sendResponse(this.getCurrentPageStatus());
           return undefined;
         }
-        if (message?.type === "yme-apply-preferences") {
-          this.applyPreferences(message.preferences);
-          sendResponse(this.getCurrentPageStatus());
-        }
         return undefined;
       });
-    }
-
-    applyPreferences(preferences) {
-      if (typeof preferences?.sidebarConcealed === "boolean") {
-        this.isSidebarConcealed = preferences.sidebarConcealed;
-      }
-      if (typeof preferences?.unreadEmphasis === "boolean") {
-        this.isUnreadEmphasisEnabled = preferences.unreadEmphasis;
-      }
-      this.refresh();
     }
   }
 

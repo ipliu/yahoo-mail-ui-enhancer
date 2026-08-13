@@ -61,21 +61,10 @@
     sidebarControl.checked = preferences.sidebarConcealed;
     unreadControl.checked = preferences.unreadEmphasis;
 
-    let activeTab = null;
-    async function applyPreference(preferencesToApply) {
-      await storage?.set(preferencesToApply);
-      try {
-        await tabs?.sendMessage?.(activeTab?.id, {
-          type: "yme-apply-preferences",
-          preferences: preferencesToApply,
-        });
-      } catch {
-        // The active page can be unsupported or still loading.
-      }
-    }
+    sidebarControl.addEventListener("change", () => storage?.set({ sidebarConcealed: sidebarControl.checked }));
+    unreadControl.addEventListener("change", () => storage?.set({ unreadEmphasis: unreadControl.checked }));
 
-    sidebarControl.addEventListener("change", () => applyPreference({ sidebarConcealed: sidebarControl.checked }));
-    unreadControl.addEventListener("change", () => applyPreference({ unreadEmphasis: unreadControl.checked }));
+    let activeTab = null;
 
     renderStatus(document, { state: "checking" }, copy);
     try {
