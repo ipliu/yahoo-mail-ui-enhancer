@@ -60,10 +60,12 @@
     const unreadControl = document.getElementById("unread-emphasis");
     sidebarControl.checked = preferences.sidebarConcealed;
     unreadControl.checked = preferences.unreadEmphasis;
+
     sidebarControl.addEventListener("change", () => storage?.set({ sidebarConcealed: sidebarControl.checked }));
     unreadControl.addEventListener("change", () => storage?.set({ unreadEmphasis: unreadControl.checked }));
 
     let activeTab = null;
+
     renderStatus(document, { state: "checking" }, copy);
     try {
       activeTab = await getActiveTab(tabs);

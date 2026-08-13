@@ -16,8 +16,8 @@ const unreadStyles = await readFile(
   "utf8",
 );
 
-function loadPageController() {
-  const context = { globalThis: {}, setTimeout };
+function loadPageController(extension = {}) {
+  const context = { globalThis: extension, setTimeout };
   vm.runInNewContext(preferencesSource, context);
   vm.runInNewContext(controllerSource, context);
   return context.globalThis.YahooMailUiEnhancer.PageController;
@@ -76,8 +76,19 @@ function createElement() {
   };
 }
 
-function createStorage(values = {}) {
+function createPreferenceChanges() {
   const listeners = new Set();
+  return {
+    addListener(listener) {
+      listeners.add(listener);
+    },
+    emit(changes, areaName = "local") {
+      for (const listener of listeners) listener(changes, areaName);
+    },
+  };
+}
+
+function createStorage(values = {}, preferenceChanges) {
   return {
     values,
     async get(defaults) {
@@ -91,12 +102,7 @@ function createStorage(values = {}) {
         }]),
       );
       Object.assign(this.values, nextValues);
-      for (const listener of listeners) listener(changes, "local");
-    },
-    onChanged: {
-      addListener(listener) {
-        listeners.add(listener);
-      },
+      preferenceChanges?.emit(changes);
     },
   };
 }
@@ -234,16 +240,46 @@ test("restores the device-local Sidebar Preference in another supported tab", as
 
 test("synchronizes Sidebar Preference to an already open supported tab", async () => {
   const PageController = loadPageController();
-  const storage = createStorage();
+  const preferenceChanges = createPreferenceChanges();
+  const storage = createStorage({}, preferenceChanges);
   const firstPage = createMailDocument({});
   const secondPage = createMailDocument({});
-  await new PageController(firstPage.document, storage).start();
-  await new PageController(secondPage.document, storage).start();
+  await new PageController(firstPage.document, storage, preferenceChanges).start();
+  await new PageController(secondPage.document, storage, preferenceChanges).start();
 
   await findToggle(firstPage.toolbar).dispatch("click");
 
   assert.equal(secondPage.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
   assert.equal(findToggle(secondPage.toolbar).getAttribute("aria-pressed"), "false");
+});
+
+test("applies a global local-storage change to the current Eligible Mail View", async () => {
+  const PageController = loadPageController();
+  const preferenceChanges = createPreferenceChanges();
+  const storage = createStorage({}, preferenceChanges);
+  const page = createMailDocument({});
+  const controller = new PageController(page.document, storage, preferenceChanges);
+  await controller.start();
+
+  await storage.set({ sidebarConcealed: false });
+
+  assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+  assert.equal(findToggle(page.toolbar).getAttribute("aria-pressed"), "false");
+});
+
+test("uses the global storage change event by default", async () => {
+  const preferenceChanges = createPreferenceChanges();
+  const storage = createStorage({}, preferenceChanges);
+  const PageController = loadPageController({
+    chrome: { storage: { local: storage, onChanged: preferenceChanges } },
+  });
+  const page = createMailDocument({});
+  const controller = new PageController(page.document);
+  await controller.start();
+
+  await storage.set({ sidebarConcealed: false });
+
+  assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
 });
 
 test("leaves unsupported pages unchanged", async () => {

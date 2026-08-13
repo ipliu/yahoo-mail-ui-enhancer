@@ -55,6 +55,25 @@ test("shows actual effects and immediately persists Popup controls", async () =>
   assert.equal(storage.values.sidebarConcealed, true);
 });
 
+test("does not send a preference message to the active page", async () => {
+  const { setupPopup } = loadPopup();
+  const document = createPopupDocument();
+  const messages = [];
+  const tabs = {
+    async query() { return [{ id: 42 }]; },
+    async sendMessage(tabId, message) {
+      messages.push({ tabId, type: message.type });
+      return { state: "active", sidebar: "concealed", unread: "active" };
+    },
+  };
+
+  await setupPopup(document, createStorage(), createRuntime(), tabs, "en-US");
+  document.elements.get("sidebar-concealment").checked = false;
+  await document.elements.get("sidebar-concealment").dispatch("change");
+
+  assert.deepEqual(messages, [{ tabId: 42, type: "yme-get-page-status" }]);
+});
+
 test("reports unsupported pages while keeping Traditional Chinese controls available", async () => {
   const { setupPopup } = loadPopup();
   const document = createPopupDocument();

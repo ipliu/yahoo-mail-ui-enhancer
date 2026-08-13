@@ -39,10 +39,14 @@
   }
 
   class PageController {
-    constructor(document, storage = Preferences.getStorage()) {
+    constructor(
+      document,
+      storage = Preferences.getStorage(),
+      preferenceChanges = Preferences.getChangeEvents(),
+    ) {
       this.document = document;
       this.storage = storage;
-      this.preferenceChanges = storage?.onChanged ?? Preferences.getChangeEvents();
+      this.preferenceChanges = preferenceChanges;
       this.isManagingView = false;
       this.isSidebarConcealed = true;
       this.isUnreadEmphasisEnabled = true;
@@ -248,8 +252,10 @@
 
     observeStatusRequests() {
       this.runtime?.onMessage?.addListener?.((message, sender, sendResponse) => {
-        if (message?.type !== "yme-get-page-status") return undefined;
-        sendResponse(this.getCurrentPageStatus());
+        if (message?.type === "yme-get-page-status") {
+          sendResponse(this.getCurrentPageStatus());
+          return undefined;
+        }
         return undefined;
       });
     }
