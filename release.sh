@@ -30,6 +30,7 @@ zip -qr "$archive_path" . \
   -x 'node_modules/*' \
   -x 'coverage/*' \
   -x 'docs/*' \
+  -x 'release.sh' \
   -x 'test/*' \
   -x 'tests/*' \
   -x '*.test.js' \
