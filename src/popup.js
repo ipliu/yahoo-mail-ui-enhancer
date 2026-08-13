@@ -60,10 +60,23 @@
     const unreadControl = document.getElementById("unread-emphasis");
     sidebarControl.checked = preferences.sidebarConcealed;
     unreadControl.checked = preferences.unreadEmphasis;
-    sidebarControl.addEventListener("change", () => storage?.set({ sidebarConcealed: sidebarControl.checked }));
-    unreadControl.addEventListener("change", () => storage?.set({ unreadEmphasis: unreadControl.checked }));
 
     let activeTab = null;
+    async function applyPreference(preferencesToApply) {
+      await storage?.set(preferencesToApply);
+      try {
+        await tabs?.sendMessage?.(activeTab?.id, {
+          type: "yme-apply-preferences",
+          preferences: preferencesToApply,
+        });
+      } catch {
+        // The active page can be unsupported or still loading.
+      }
+    }
+
+    sidebarControl.addEventListener("change", () => applyPreference({ sidebarConcealed: sidebarControl.checked }));
+    unreadControl.addEventListener("change", () => applyPreference({ unreadEmphasis: unreadControl.checked }));
+
     renderStatus(document, { state: "checking" }, copy);
     try {
       activeTab = await getActiveTab(tabs);

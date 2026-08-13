@@ -248,10 +248,26 @@
 
     observeStatusRequests() {
       this.runtime?.onMessage?.addListener?.((message, sender, sendResponse) => {
-        if (message?.type !== "yme-get-page-status") return undefined;
-        sendResponse(this.getCurrentPageStatus());
+        if (message?.type === "yme-get-page-status") {
+          sendResponse(this.getCurrentPageStatus());
+          return undefined;
+        }
+        if (message?.type === "yme-apply-preferences") {
+          this.applyPreferences(message.preferences);
+          sendResponse(this.getCurrentPageStatus());
+        }
         return undefined;
       });
+    }
+
+    applyPreferences(preferences) {
+      if (typeof preferences?.sidebarConcealed === "boolean") {
+        this.isSidebarConcealed = preferences.sidebarConcealed;
+      }
+      if (typeof preferences?.unreadEmphasis === "boolean") {
+        this.isUnreadEmphasisEnabled = preferences.unreadEmphasis;
+      }
+      this.refresh();
     }
   }
 

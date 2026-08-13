@@ -16,8 +16,8 @@ const unreadStyles = await readFile(
   "utf8",
 );
 
-function loadPageController() {
-  const context = { globalThis: {}, setTimeout };
+function loadPageController(extension = {}) {
+  const context = { globalThis: extension, setTimeout };
   vm.runInNewContext(preferencesSource, context);
   vm.runInNewContext(controllerSource, context);
   return context.globalThis.YahooMailUiEnhancer.PageController;
@@ -97,6 +97,22 @@ function createStorage(values = {}) {
       addListener(listener) {
         listeners.add(listener);
       },
+    },
+  };
+}
+
+function createRuntime() {
+  const listeners = new Set();
+  return {
+    onMessage: {
+      addListener(listener) {
+        listeners.add(listener);
+      },
+    },
+    send(message) {
+      let response;
+      for (const listener of listeners) response = listener(message, {}, (value) => { response = value; });
+      return response;
     },
   };
 }
@@ -244,6 +260,19 @@ test("synchronizes Sidebar Preference to an already open supported tab", async (
 
   assert.equal(secondPage.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
   assert.equal(findToggle(secondPage.toolbar).getAttribute("aria-pressed"), "false");
+});
+
+test("applies a Popup preference message immediately in the active Eligible Mail View", async () => {
+  const runtime = createRuntime();
+  const PageController = loadPageController({ chrome: { runtime } });
+  const page = createMailDocument({});
+  const controller = new PageController(page.document, createStorage());
+  await controller.start();
+
+  runtime.send({ type: "yme-apply-preferences", preferences: { sidebarConcealed: false } });
+
+  assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
+  assert.equal(findToggle(page.toolbar).getAttribute("aria-pressed"), "false");
 });
 
 test("leaves unsupported pages unchanged", async () => {
