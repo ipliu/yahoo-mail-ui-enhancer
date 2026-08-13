@@ -3,6 +3,10 @@ name: Deploy privacy policy to Pages
 on:
   push:
     branches: ["main"]
+    paths:
+      - "privacy.html"
+      - "assets/icon-48.png"
+      - ".github/workflows/deploy-privacy-policy.yml"
 
   workflow_dispatch:
 

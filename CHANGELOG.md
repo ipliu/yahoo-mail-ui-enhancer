@@ -7,6 +7,11 @@ All notable changes to this project are documented in this file.
 ### Added
 
 - Added a release script that creates a Chrome Web Store ZIP package and excludes development and secret files.
+- Added Chrome Web Store screenshots and a GitHub Pages workflow that publishes the local privacy policy.
+
+### Changed
+
+- Restricted automatic privacy-policy deployments to policy, policy-icon, and deployment-workflow changes.
 
 ## [0.2.3] - 2026-08-13
 
