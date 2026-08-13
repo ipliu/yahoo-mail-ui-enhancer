@@ -141,34 +141,10 @@
         const isUnread = row.querySelector('[data-test-id="unread-indicator"]') !== null;
         if (this.isUnreadEmphasisEnabled && isDarkTheme && isUnread) {
           row.setAttribute(UNREAD_EMPHASIS_ATTRIBUTE, "true");
-          this.renderUnreadTextEmphasis(row, true);
         } else {
           row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
-          this.renderUnreadTextEmphasis(row, false);
         }
       }
-    }
-
-    renderUnreadTextEmphasis(row, isEnabled) {
-      const textElements = this.findVerifiedUnreadTextElements(row);
-
-      for (const element of textElements) {
-        element.toggleAttribute("data-yme-unread-text", isEnabled);
-      }
-    }
-
-    findVerifiedUnreadTextElements(row) {
-      const messageDetails = row.children?.[1];
-      const sender = messageDetails?.children?.[0];
-      const subject = messageDetails?.children?.[1];
-
-      if (!row.querySelector('[data-test-id="unread-indicator"]') ||
-        row.children?.length !== 3 ||
-        messageDetails?.children?.length !== 3 ||
-        !sender ||
-        !subject) return [];
-
-      return [sender, subject];
     }
 
     observePreferenceChanges() {
@@ -227,7 +203,6 @@
         ?.querySelectorAll('a[role="row"]')
         .forEach((row) => {
           row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
-          this.renderUnreadTextEmphasis(row, false);
         });
     }
 

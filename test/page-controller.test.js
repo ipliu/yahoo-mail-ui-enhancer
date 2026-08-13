@@ -429,24 +429,25 @@ test("applies Unread Emphasis to virtualized rows after mail-list replacement", 
   assert.equal(replacementUnread.row.getAttribute("data-yme-unread-emphasis"), "true");
 });
 
-test("keeps Unread Emphasis from overriding native interaction states", () => {
+test("uses the approved unread-row background without extension-owned text styling", () => {
   assert.match(unreadStyles, /\[data-yme-unread-emphasis="true"\]:not\(:hover\)/);
   assert.match(unreadStyles, /:not\(:focus-within\)/);
   assert.match(unreadStyles, /:not\(\[aria-selected="true"\]\)/);
   assert.match(unreadStyles, /:not\(\[data-dragging="true"\]\)/);
-  assert.match(unreadStyles, /\[data-yme-unread-text="true"\]/);
+  assert.match(unreadStyles, /background: #3A4963/);
+  assert.doesNotMatch(unreadStyles, /data-yme-unread-text/);
 });
 
-test("does not emphasize text when an unread row structure is not verified", async () => {
+test("does not add extension-owned text styling to unread rows", async () => {
   const PageController = loadPageController();
   const unread = createMessageRow({ unread: true });
   const page = createMailDocument({ rows: [unread.row] });
-  unread.row.children[1].children = [unread.sender];
 
   await new PageController(page.document, createStorage()).start();
 
   assert.equal(unread.row.getAttribute("data-yme-unread-emphasis"), "true");
   assert.equal(unread.sender.hasAttribute("data-yme-unread-text"), false);
+  assert.equal(unread.subject.hasAttribute("data-yme-unread-text"), false);
 });
 
 test("keeps Sidebar Concealment active when the Mail Theme Marker is not dark", async () => {
