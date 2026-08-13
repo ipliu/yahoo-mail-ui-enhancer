@@ -4,6 +4,7 @@ Issues and specs for this repository live in GitHub Issues. Use the `gh` CLI for
 
 ## Conventions
 
+- Use Conventional Commit-style English titles for Issues, such as `feat: add Popup controls`, `fix: restore sidebar synchronization`, or `docs: clarify manual acceptance`.
 - Create an issue with `gh issue create`.
 - Read an issue and its comments with `gh issue view <number> --comments`.
 - List issues with `gh issue list`, narrowing by state and label as needed.
