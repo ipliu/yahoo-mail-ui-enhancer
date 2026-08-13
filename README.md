@@ -35,3 +35,7 @@ Open the extension's toolbar icon to use the Popup. It shows whether the current
 ## Manual verification
 
 Follow [the manual acceptance guide](docs/manual-acceptance.md) before a developer-mode release.
+
+## Create a Chrome Web Store package
+
+Run `./release.sh` from the repository root. It creates `dist/yahoo-mail-ui-enhancer-<version>.zip`, with `manifest.json` at the ZIP root. The package excludes Git metadata, documentation, source maps, test files, release tooling, local build output, and common secret-file formats. Review the generated ZIP before uploading it to the Chrome Web Store.

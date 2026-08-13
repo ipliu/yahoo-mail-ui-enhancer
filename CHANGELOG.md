@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## Unreleased
+
+### Added
+
+- Added a release script that creates a Chrome Web Store ZIP package and excludes development and secret files.
+
 ## [0.2.3] - 2026-08-13
 
 ### Added
