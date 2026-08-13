@@ -22,7 +22,8 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 - In a light Eligible Mail View, confirm the Popup reports that Unread Emphasis is unavailable in light mode while the Mail Sidebar status remains accurate.
 - Toggle each feature in the Popup. Confirm the effect applies immediately in the current tab and every already open Eligible Mail View.
 - While the Popup is open, change folders or the Yahoo Mail theme. Confirm Current Page Status updates without reopening the Popup.
-- Open the Popup on a non-Yahoo page and an unsupported Yahoo Mail route. Confirm it displays `Not supported here`, keeps both controls available, and does not change the page.
+- Open the Popup on a non-Yahoo page and an unsupported Yahoo Mail route. Confirm it displays `Not supported here` with an orange status marker, hides both actual-effect rows, keeps both controls available, and does not change the page.
+- In an active Eligible Mail View, confirm the status marker is green and visually distinct from the orange unsupported-page marker.
 - Verify English and Traditional Chinese (Taiwan) browser language preferences. Confirm Popup copy and Sidebar Toggle accessible names use the selected Display Language.
 - Select `Privacy` and confirm the Local Privacy Policy opens from the extension package without a network request.
 
