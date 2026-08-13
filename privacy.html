@@ -1,5 +1,199 @@
 <!doctype html>
 <html lang="en">
-  <head><meta charset="utf-8"><title>Privacy Policy</title></head>
-  <body><main><h1>Privacy Policy</h1><p>This extension operates offline and stores preferences only on this device. It makes no telemetry, analytics, error reporting, remote configuration, or remote network requests.</p></main></body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Privacy Policy · Yahoo Mail UI Enhancer</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --ink: #1c2d4a;
+        --muted-ink: #526b8d;
+        --canvas: #f7fafc;
+        --surface: #ffffff;
+        --rule: #d8e2eb;
+        --muted: #62748a;
+        --ice: #8bdbe8;
+        --ice-pale: #d8f6fa;
+        --success: #14795f;
+        --success-pale: #e5f6ef;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #d8f6fa;
+          --muted-ink: #a8bdd3;
+          --canvas: #111b2e;
+          --surface: #17243a;
+          --rule: #2b3d58;
+          --muted: #a8bdd3;
+          --ice: #8bdbe8;
+          --ice-pale: #1c2d4a;
+          --success: #74d6b2;
+          --success-pale: #173d37;
+        }
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        background: var(--canvas);
+        color: var(--ink);
+        margin: 0;
+      }
+
+      a { color: var(--muted-ink); text-decoration-thickness: 1px; text-underline-offset: .17em; }
+
+      a:focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; }
+
+      .page-shell { margin: 0 auto; max-width: 68rem; padding: clamp(1.25rem, 4vw, 4rem) clamp(1.1rem, 4vw, 2rem) 3rem; }
+
+      .masthead { align-items: center; display: flex; gap: .75rem; margin-bottom: clamp(2.75rem, 9vw, 6.5rem); }
+
+      .brand-mark { display: block; height: 2.2rem; width: 2.2rem; }
+
+      .product-name { font-size: .86rem; font-weight: 750; letter-spacing: -.01em; margin: 0; }
+
+      .eyebrow { color: var(--muted-ink); font-size: .65rem; font-weight: 750; letter-spacing: .14em; line-height: 1; margin: 0 0 .28rem; }
+
+      .policy-header { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr) auto; margin-bottom: clamp(2.5rem, 7vw, 5.5rem); }
+
+      h1 { font-size: clamp(2.5rem, 8vw, 5.5rem); font-weight: 780; letter-spacing: -.065em; line-height: .92; margin: 0; max-width: 10ch; }
+
+      .lede { color: var(--muted); font-size: clamp(1rem, 2vw, 1.18rem); line-height: 1.58; margin: 1.2rem 0 0; max-width: 39rem; }
+
+      .privacy-seal { align-items: center; align-self: end; background: var(--surface); border: 1px solid var(--rule); border-radius: 50%; display: grid; height: 8.5rem; justify-items: center; padding: .7rem; position: relative; width: 8.5rem; }
+
+      .privacy-seal::before { border: 2px solid var(--ice); border-radius: 50%; content: ""; inset: .6rem; position: absolute; }
+
+      .seal-icon { color: var(--success); font-size: 2rem; font-weight: 800; line-height: 1; z-index: 1; }
+
+      .seal-label { color: var(--muted-ink); font-size: .56rem; font-weight: 800; letter-spacing: .12em; line-height: 1.2; text-align: center; z-index: 1; }
+
+      .policy-grid { display: grid; gap: clamp(2.5rem, 7vw, 5.5rem); grid-template-columns: minmax(12rem, .7fr) minmax(0, 2fr); }
+
+      .policy-nav { align-self: start; border-top: 1px solid var(--rule); display: grid; gap: .75rem; padding-top: .9rem; position: sticky; top: 1.5rem; }
+
+      .policy-nav p { color: var(--muted-ink); font-size: .65rem; font-weight: 750; letter-spacing: .12em; margin: 0; text-transform: uppercase; }
+
+      .policy-nav a { font-size: .82rem; font-weight: 680; text-decoration: none; }
+
+      .policy-nav a:hover { text-decoration: underline; }
+
+      .policy-content { display: grid; gap: 3.5rem; }
+
+      .section { border-top: 1px solid var(--rule); padding-top: 1.1rem; scroll-margin-top: 1.5rem; }
+
+      .section-heading { align-items: baseline; display: flex; gap: .9rem; margin-bottom: 1rem; }
+
+      .section-marker { color: var(--ice); font-size: .68rem; font-weight: 800; letter-spacing: .1em; }
+
+      h2 { font-size: 1.16rem; font-weight: 760; letter-spacing: -.025em; line-height: 1.2; margin: 0; }
+
+      p, li { color: var(--muted); font-size: 1rem; line-height: 1.65; }
+
+      .section p { margin: 0; max-width: 42rem; }
+
+      .assurance { background: var(--success-pale); border-left: 3px solid var(--success); border-radius: 0 .6rem .6rem 0; color: var(--ink); font-size: clamp(1.15rem, 2.4vw, 1.48rem); font-weight: 680; letter-spacing: -.025em; line-height: 1.35; margin: 1.4rem 0 0; max-width: 42rem; padding: 1.2rem 1.35rem; }
+
+      .facts { display: grid; gap: 0; margin: 1.4rem 0 0; max-width: 42rem; }
+
+      .fact { border-top: 1px solid var(--rule); display: grid; gap: .35rem; grid-template-columns: minmax(9rem, .72fr) 2fr; padding: .85rem 0; }
+
+      .fact:last-child { border-bottom: 1px solid var(--rule); }
+
+      dt { color: var(--ink); font-size: .84rem; font-weight: 720; }
+
+      dd { color: var(--muted); font-size: .9rem; line-height: 1.5; margin: 0; }
+
+      ul { margin: .85rem 0 0; max-width: 42rem; padding-left: 1.2rem; }
+
+      li { margin: .35rem 0; }
+
+      .footer { border-top: 1px solid var(--rule); color: var(--muted); display: flex; font-size: .76rem; gap: 1rem; justify-content: space-between; margin-top: clamp(3rem, 9vw, 7rem); padding-top: 1rem; }
+
+      .footer p { font-size: inherit; margin: 0; }
+
+      @media (max-width: 42rem) {
+        .policy-header, .policy-grid { grid-template-columns: 1fr; }
+        .privacy-seal { height: 6.8rem; justify-self: end; width: 6.8rem; }
+        .policy-nav { display: none; }
+        .fact { grid-template-columns: 1fr; gap: .18rem; }
+        .footer { align-items: start; flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="masthead">
+        <img class="brand-mark" src="assets/icon-48.png" width="35" height="35" alt="">
+        <div>
+          <p class="eyebrow">MAIL FOCUS</p>
+          <p class="product-name">Yahoo Mail UI Enhancer</p>
+        </div>
+      </header>
+
+      <section class="policy-header" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">PRIVACY POLICY · EFFECTIVE AUGUST 13, 2026</p>
+          <h1 id="page-title">Your inbox stays your business.</h1>
+          <p class="lede">Yahoo Mail UI Enhancer works locally in your browser. It is built to improve the mail interface without collecting, sending, or sharing your information.</p>
+        </div>
+        <div class="privacy-seal" aria-label="Local only. No network activity.">
+          <span class="seal-icon" aria-hidden="true">✓</span>
+          <span class="seal-label">LOCAL ONLY<br>NO DATA OUT</span>
+        </div>
+      </section>
+
+      <div class="policy-grid">
+        <nav class="policy-nav" aria-label="Policy sections">
+          <p>On this page</p>
+          <a href="#summary">At a glance</a>
+          <a href="#stored">What stays on device</a>
+          <a href="#not-collected">What we do not collect</a>
+          <a href="#scope">Scope</a>
+        </nav>
+
+        <div class="policy-content">
+          <section id="summary" class="section">
+            <div class="section-heading"><span class="section-marker" aria-hidden="true">01</span><h2>At a glance</h2></div>
+            <p>This extension operates offline. It changes the appearance of eligible Yahoo Mail pages and remembers the options you select.</p>
+            <p class="assurance">No telemetry. No analytics. No remote configuration. No network requests.</p>
+          </section>
+
+          <section id="stored" class="section">
+            <div class="section-heading"><span class="section-marker" aria-hidden="true">02</span><h2>What stays on your device</h2></div>
+            <p>The extension uses your browser’s local extension storage only to retain its settings. These values do not leave your browser through this extension.</p>
+            <dl class="facts">
+              <div class="fact"><dt>Sidebar preference</dt><dd>Whether the Yahoo Mail sidebar is concealed.</dd></div>
+              <div class="fact"><dt>Unread emphasis</dt><dd>Whether unread messages receive stronger emphasis in dark mode.</dd></div>
+            </dl>
+          </section>
+
+          <section id="not-collected" class="section">
+            <div class="section-heading"><span class="section-marker" aria-hidden="true">03</span><h2>What we do not collect</h2></div>
+            <p>The extension does not collect or transmit personal information, including:</p>
+            <ul>
+              <li>Email content, subjects, attachments, or recipient information</li>
+              <li>Account identifiers, passwords, or authentication information</li>
+              <li>Browsing activity, usage data, or device information</li>
+              <li>Diagnostics, crash reports, analytics, or advertising identifiers</li>
+            </ul>
+          </section>
+
+          <section id="scope" class="section">
+            <div class="section-heading"><span class="section-marker" aria-hidden="true">04</span><h2>Scope</h2></div>
+            <p>This policy applies to Yahoo Mail UI Enhancer. The extension is independent and unofficial; it is not affiliated with, endorsed by, or sponsored by Yahoo. Yahoo’s own services remain governed by Yahoo’s applicable policies.</p>
+          </section>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>Yahoo Mail UI Enhancer</p>
+        <p>Independent browser extension</p>
+      </footer>
+    </main>
+  </body>
 </html>
