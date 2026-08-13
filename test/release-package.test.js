@@ -4,6 +4,7 @@ import test from "node:test";
 
 const manifest = JSON.parse(await readFile(new URL("../manifest.json", import.meta.url), "utf8"));
 const readme = await readFile(new URL("../README.md", import.meta.url), "utf8");
+const changelog = await readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8");
 const acceptanceGuide = await readFile(
   new URL("../docs/manual-acceptance.md", import.meta.url),
   "utf8",
@@ -22,6 +23,11 @@ test("includes an original local extension icon in the developer-mode package", 
   await Promise.all(
     Object.values(manifest.icons).map((iconPath) => access(new URL(`../${iconPath}`, import.meta.url))),
   );
+});
+
+test("declares the current release version and its changelog entry", () => {
+  assert.equal(manifest.version, "0.2.3");
+  assert.match(changelog, /^## \[0\.2\.3\] - 2026-08-13$/m);
 });
 
 test("uses a toolbar Popup instead of an extension settings page", async () => {
