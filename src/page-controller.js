@@ -139,7 +139,10 @@
 
       for (const row of rows) {
         const unreadIndicator = row.querySelector('[data-test-id="unread-indicator"] span');
-        if (!unreadIndicator) continue;
+        if (!unreadIndicator) {
+          row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
+          continue;
+        }
 
         const isUnread = this.document.defaultView?.getComputedStyle(unreadIndicator).visibility !== "hidden";
         if (this.isUnreadEmphasisEnabled && isDarkTheme && isUnread) {

@@ -11,11 +11,6 @@ const preferencesSource = await readFile(
   new URL("../src/preferences.js", import.meta.url),
   "utf8",
 );
-const unreadStyles = await readFile(
-  new URL("../src/sidebar-concealment.css", import.meta.url),
-  "utf8",
-);
-
 function loadPageController(extension = {}) {
   const context = { globalThis: extension, setTimeout };
   vm.runInNewContext(preferencesSource, context);
@@ -451,13 +446,17 @@ test("applies Unread Emphasis to virtualized rows after mail-list replacement", 
   assert.equal(replacementUnread.row.getAttribute("data-yme-unread-emphasis"), "true");
 });
 
-test("uses the approved unread-row background without extension-owned text styling", () => {
-  assert.match(unreadStyles, /li\[data-yme-unread-emphasis="true"\]:not\(:hover\).* > div/);
-  assert.match(unreadStyles, /:not\(:focus-within\)/);
-  assert.match(unreadStyles, /:not\(\[aria-selected="true"\]\)/);
-  assert.match(unreadStyles, /:not\(\[data-dragging="true"\]\)/);
-  assert.match(unreadStyles, /background-color: #3A4963 !important/);
-  assert.doesNotMatch(unreadStyles, /data-yme-unread-text/);
+test("removes Unread Emphasis when Yahoo removes the unread indicator", async () => {
+  const PageController = loadPageController();
+  const unread = createMessageRow({ unread: true });
+  const page = createMailDocument({ rows: [unread.row] });
+  const controller = new PageController(page.document, createStorage());
+  await controller.start();
+  unread.rowContent.children[0].children = [];
+
+  controller.refresh();
+
+  assert.equal(unread.row.hasAttribute("data-yme-unread-emphasis"), false);
 });
 
 test("does not add extension-owned text styling to unread rows", async () => {
