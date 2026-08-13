@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Neutral mail layout icon">
-  <rect width="128" height="128" rx="24" fill="#2f3542"/>
-  <path d="M28 38h72v52H28z" fill="none" stroke="#f1f2f6" stroke-linejoin="round" stroke-width="8"/>
-  <path d="m30 42 34 28 34-28" fill="none" stroke="#f1f2f6" stroke-linejoin="round" stroke-width="8"/>
-  <path d="M42 100h44" stroke="#a4b0be" stroke-linecap="round" stroke-width="8"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Focused mail icon">
+  <path d="m19 42 10 22-10 22" fill="none" stroke="#8BDBE8" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"/>
+  <path d="m109 42-10 22 10 22" fill="none" stroke="#8BDBE8" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"/>
+  <rect x="35" y="38" width="58" height="52" rx="8" fill="#1C2D4A"/>
+  <path d="m40 82 17-15m31 15L71 67" fill="none" stroke="#526B8D" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
+  <path d="m40 47 24 20 24-20" fill="none" stroke="#D8F6FA" stroke-linecap="round" stroke-linejoin="round" stroke-width="7"/>
 </svg>

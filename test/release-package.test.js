@@ -10,8 +10,18 @@ const acceptanceGuide = await readFile(
 );
 
 test("includes an original local extension icon in the developer-mode package", async () => {
-  assert.equal(manifest.icons["128"], "assets/icon-128.png");
-  await access(new URL(`../${manifest.icons["128"]}`, import.meta.url));
+  const expectedIcons = {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png",
+  };
+
+  assert.deepEqual(manifest.icons, expectedIcons);
+
+  await Promise.all(
+    Object.values(manifest.icons).map((iconPath) => access(new URL(`../${iconPath}`, import.meta.url))),
+  );
 });
 
 test("uses a toolbar Popup instead of an extension settings page", async () => {
