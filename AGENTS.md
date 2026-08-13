@@ -4,6 +4,8 @@
 
 Issues and specs are tracked in GitHub Issues. See `docs/agents/issue-tracker.md`.
 
+Create GitHub Issues, pull requests, and related tracker content in English.
+
 Run every authenticated `gh` command with full host permissions (outside the sandbox; in Codex, use `sandbox_permissions: require_escalated`) so it can access the user's valid GitHub CLI credentials. Never print, copy, or otherwise expose authentication tokens.
 
 ### Domain docs
