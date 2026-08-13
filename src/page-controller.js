@@ -134,11 +134,14 @@
     }
 
     renderUnreadEmphasis(anchors) {
-      const rows = anchors.workspace.querySelectorAll('a[role="row"]');
+      const rows = anchors.workspace.querySelectorAll('li');
       const isDarkTheme = this.document.body?.getAttribute("data-color-scheme") === "dark";
 
       for (const row of rows) {
-        const isUnread = row.querySelector('[data-test-id="unread-indicator"]') !== null;
+        const unreadIndicator = row.querySelector('[data-test-id="unread-indicator"] span');
+        if (!unreadIndicator) continue;
+
+        const isUnread = this.document.defaultView?.getComputedStyle(unreadIndicator).visibility !== "hidden";
         if (this.isUnreadEmphasisEnabled && isDarkTheme && isUnread) {
           row.setAttribute(UNREAD_EMPHASIS_ATTRIBUTE, "true");
         } else {
@@ -200,7 +203,7 @@
 
     removeUnreadEmphasis() {
       this.document.querySelector(REQUIRED_ANCHORS.workspace)
-        ?.querySelectorAll('a[role="row"]')
+        ?.querySelectorAll('li')
         .forEach((row) => {
           row.removeAttribute(UNREAD_EMPHASIS_ATTRIBUTE);
         });

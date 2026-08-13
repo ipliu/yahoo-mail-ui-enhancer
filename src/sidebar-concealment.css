@@ -18,6 +18,6 @@ html[data-yme-sidebar-concealed="true"] [data-test-id="novation-right-rail"] {
   min-width: 2rem;
 }
 
-[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) {
-  background: #3A4963;
+li[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) > div {
+  background-color: #3A4963 !important;
 }

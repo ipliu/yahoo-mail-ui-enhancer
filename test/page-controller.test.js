@@ -23,11 +23,12 @@ function loadPageController(extension = {}) {
   return context.globalThis.YahooMailUiEnhancer.PageController;
 }
 
-function createElement() {
+function createElement(tagName = "div") {
   const attributes = new Map();
   const listeners = new Map();
   return {
     children: [],
+    tagName,
     contains(other) {
       return other === this || this.children.some((child) => child.contains(other));
     },
@@ -61,10 +62,12 @@ function createElement() {
     querySelectorAll(selector) {
       const matches = [];
       for (const child of this.children) {
+        if (selector === child.tagName) matches.push(child);
         if (selector === '[data-test-id="unread-indicator"]' &&
           child.getAttribute("data-test-id") === "unread-indicator") matches.push(child);
-        if (selector === 'a[role="row"]' &&
-          child.getAttribute("role") === "row") matches.push(child);
+        if (selector === '[data-test-id="unread-indicator"] span' &&
+          this.getAttribute("data-test-id") === "unread-indicator" &&
+          child.tagName === "span") matches.push(child);
         matches.push(...child.querySelectorAll(selector));
       }
       return matches;
@@ -140,6 +143,11 @@ function createMailDocument({
   return {
     application,
     document: {
+      defaultView: {
+        getComputedStyle(element) {
+          return { visibility: element.getAttribute("data-visibility") ?? "visible" };
+        },
+      },
       documentElement,
       body,
       location: new URL(url),
@@ -156,9 +164,9 @@ function createMailDocument({
   };
 }
 
-function createMessageRow({ unread = false } = {}) {
-  const row = createElement();
-  row.setAttribute("role", "row");
+function createMessageRow({ unread = false, unreadVisible = true } = {}) {
+  const row = createElement("li");
+  const rowContent = createElement();
   const sender = createElement();
   const subject = createElement();
   const preview = createElement();
@@ -170,13 +178,17 @@ function createMessageRow({ unread = false } = {}) {
   const dateDetails = createElement();
   messageDetails.append(sender, subject, preview);
   dateDetails.append(date);
-  row.append(selectionDetails, messageDetails, dateDetails);
+  rowContent.append(selectionDetails, messageDetails, dateDetails);
+  row.append(rowContent);
   if (unread) {
     const unreadIndicator = createElement();
     unreadIndicator.setAttribute("data-test-id", "unread-indicator");
+    const indicatorContent = createElement("span");
+    if (!unreadVisible) indicatorContent.setAttribute("data-visibility", "hidden");
+    unreadIndicator.append(indicatorContent);
     selectionDetails.append(unreadIndicator);
   }
-  return { date, preview, row, sender, subject };
+  return { date, preview, row, rowContent, sender, subject };
 }
 
 function findToggle(toolbar) {
@@ -368,6 +380,16 @@ test("emphasizes only unread rows in a dark Eligible Mail View", async () => {
   assert.equal(unread.row.querySelector('[data-test-id="unread-indicator"]').removed, undefined);
 });
 
+test("leaves rows with a hidden unread indicator unchanged", async () => {
+  const PageController = loadPageController();
+  const unread = createMessageRow({ unread: true, unreadVisible: false });
+  const page = createMailDocument({ rows: [unread.row] });
+
+  await new PageController(page.document, createStorage()).start();
+
+  assert.equal(unread.row.hasAttribute("data-yme-unread-emphasis"), false);
+});
+
 test("leaves mail rows unchanged in a light Mail Theme Marker", async () => {
   const PageController = loadPageController();
   const unread = createMessageRow({ unread: true });
@@ -430,11 +452,11 @@ test("applies Unread Emphasis to virtualized rows after mail-list replacement", 
 });
 
 test("uses the approved unread-row background without extension-owned text styling", () => {
-  assert.match(unreadStyles, /\[data-yme-unread-emphasis="true"\]:not\(:hover\)/);
+  assert.match(unreadStyles, /li\[data-yme-unread-emphasis="true"\]:not\(:hover\).* > div/);
   assert.match(unreadStyles, /:not\(:focus-within\)/);
   assert.match(unreadStyles, /:not\(\[aria-selected="true"\]\)/);
   assert.match(unreadStyles, /:not\(\[data-dragging="true"\]\)/);
-  assert.match(unreadStyles, /background: #3A4963/);
+  assert.match(unreadStyles, /background-color: #3A4963 !important/);
   assert.doesNotMatch(unreadStyles, /data-yme-unread-text/);
 });
 
