@@ -4,13 +4,13 @@
   const Preferences = global.YahooMailUiEnhancer?.Preferences;
   const COPY = Object.freeze({
     en: {
-      title: "Yahoo Mail UI Enhancer", currentPage: "Current page", checking: "Checking", active: "Active", lightModeStatus: "Light mode", unsupported: "Not supported here",
+      title: "Yahoo Mail UI Enhancer", eyebrow: "MAIL FOCUS", currentPage: "Current page", features: "Features", checking: "Checking", active: "Active", lightModeStatus: "Light mode", unsupported: "Not supported here",
       unsupportedDetail: "Open a supported Yahoo Mail folder to apply these changes.", sidebar: "Conceal Mail Sidebar", unread: "Emphasize unread mail in dark mode",
       sidebarStatus: "Sidebar", unreadStatus: "Unread emphasis", concealed: "Concealed", shown: "Shown", unreadActive: "Active", lightMode: "Unavailable in light mode", disabled: "Disabled",
       privacy: "Your preferences and page changes stay on this device. This extension makes no network requests.", unofficial: "This independent, unofficial extension is not affiliated with Yahoo.", privacyLink: "Privacy",
     },
     "zh-TW": {
-      title: "Yahoo Mail 介面增強", currentPage: "目前頁面", checking: "檢查中", active: "已啟用", lightModeStatus: "淺色模式", unsupported: "此頁面不受支援",
+      title: "Yahoo Mail 介面增強", eyebrow: "郵件聚焦", currentPage: "目前頁面", features: "功能", checking: "檢查中", active: "已啟用", lightModeStatus: "淺色模式", unsupported: "此頁面不受支援",
       unsupportedDetail: "請開啟受支援的 Yahoo Mail 資料夾以套用這些變更。", sidebar: "隱藏郵件側欄", unread: "在深色模式強調未讀郵件",
       sidebarStatus: "郵件側欄", unreadStatus: "未讀強調", concealed: "已隱藏", shown: "已顯示", unreadActive: "已啟用", lightMode: "淺色模式無法使用", disabled: "已停用",
       privacy: "你的偏好設定與頁面變更僅保留在此裝置。此擴充功能不會發出網路請求。", unofficial: "此獨立、非官方擴充功能與 Yahoo 無關。", privacyLink: "隱私權",
@@ -21,7 +21,9 @@
 
   function renderStatus(document, status, copy) {
     const effects = document.getElementById("effect-status");
+    const statusCard = document.getElementById("status-card");
     if (status?.state === "active" || status?.state === "light-mode") {
+      statusCard.dataset.state = status.state;
       setText(document, "status", status.state === "light-mode" ? copy.lightModeStatus : copy.active);
       setText(document, "status-detail", "");
       effects.hidden = false;
@@ -29,6 +31,7 @@
       setText(document, "unread-status", status.unread === "active" ? copy.unreadActive : status.unread === "light-mode" ? copy.lightMode : copy.disabled);
       return;
     }
+    statusCard.dataset.state = status?.state === "checking" ? "checking" : "not-supported";
     effects.hidden = true;
     setText(document, "status", status?.state === "checking" ? copy.checking : copy.unsupported);
     setText(document, "status-detail", status?.state === "checking" ? "" : copy.unsupportedDetail);
@@ -51,7 +54,7 @@
 
   async function setupPopup(document, storage = Preferences.getStorage(), runtime = Preferences.getRuntime(), tabs = Preferences.getTabs(), displayLanguage = global.navigator?.language) {
     const copy = COPY[Preferences.resolveDisplayLanguage(displayLanguage)];
-    for (const [id, value] of Object.entries({ title: copy.title, "title-heading": copy.title, "status-heading": copy.currentPage, "sidebar-label": copy.sidebar, "unread-label": copy.unread, "sidebar-status-label": copy.sidebarStatus, "unread-status-label": copy.unreadStatus, privacy: copy.privacy, unofficial: copy.unofficial, "privacy-link": copy.privacyLink })) setText(document, id, value);
+    for (const [id, value] of Object.entries({ title: copy.title, eyebrow: copy.eyebrow, "title-heading": copy.title, "status-heading": copy.currentPage, "features-heading": copy.features, "sidebar-label": copy.sidebar, "unread-label": copy.unread, "sidebar-status-label": copy.sidebarStatus, "unread-status-label": copy.unreadStatus, privacy: copy.privacy, unofficial: copy.unofficial, "privacy-link": copy.privacyLink })) setText(document, id, value);
     const preferences = await storage?.get(Preferences.defaults) ?? Preferences.defaults;
     const sidebarControl = document.getElementById("sidebar-concealment");
     const unreadControl = document.getElementById("unread-emphasis");
