@@ -11,7 +11,7 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 ## Sidebar Concealment
 
 - In a mail list, confirm the Mail Sidebar is concealed by default, main content expands, and a responsive Content Gutter remains at narrow and wide viewport widths.
-- Use the Sidebar Toggle with a pointer, Enter, and Space. Confirm its pressed state and announcement reflect the change.
+- Use the Popup Sidebar Concealment control with a pointer and keyboard. Confirm the Mail Sidebar and Current Page Status update accordingly.
 - Restore the Mail Sidebar and confirm its native controls and contents remain intact.
 - Reload the tab and open another supported tab. Confirm the Sidebar Preference persists in both.
 - Repeat in a message-reading workspace.
@@ -24,7 +24,7 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 - While the Popup is open, change folders or the Yahoo Mail theme. Confirm Current Page Status updates without reopening the Popup.
 - Open the Popup on a non-Yahoo page and an unsupported Yahoo Mail route. Confirm it displays `Not supported here` with an orange status marker, hides both actual-effect rows, keeps both controls available, and does not change the page.
 - In an active Eligible Mail View, confirm the status marker is green and visually distinct from the orange unsupported-page marker.
-- Verify English and Traditional Chinese (Taiwan) browser language preferences. Confirm Popup copy and Sidebar Toggle accessible names use the selected Display Language.
+- Verify English and Traditional Chinese (Taiwan) browser language preferences. Confirm Popup copy and accessible names use the selected Display Language.
 - Select `Privacy` and confirm the Local Privacy Policy opens from the extension package without a network request.
 
 ## Unread Emphasis
@@ -37,7 +37,7 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 
 ## Dynamic and failure cases
 
-- Change folders, search, scroll through a virtualized list, and allow Yahoo Mail to rerender. Confirm both features remain correct without duplicate Sidebar Toggles.
+- Change folders, search, scroll through a virtualized list, and allow Yahoo Mail to rerender. Confirm both features remain correct and no extension-owned page controls are inserted.
 - Change the Yahoo Mail theme while a list is visible. Confirm Unread Emphasis updates correctly.
 - Visit a non-mail workspace and an unsupported route. Confirm the extension makes no visual changes.
 - Temporarily verify a missing or altered supported-interface anchor in a controlled test fixture only. Confirm the extension fails closed and restores extension-owned state.

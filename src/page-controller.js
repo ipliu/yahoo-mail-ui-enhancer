@@ -13,11 +13,6 @@
   const CONTENT_GUTTER_ATTRIBUTE = "data-yme-content-gutter";
   const UNREAD_EMPHASIS_ATTRIBUTE = "data-yme-unread-emphasis";
   const Preferences = global.YahooMailUiEnhancer?.Preferences;
-  const COPY = Object.freeze({
-    en: { show: "Show Mail Sidebar", hide: "Hide Mail Sidebar", concealed: "Mail Sidebar concealed", restored: "Mail Sidebar restored" },
-    "zh-TW": { show: "顯示郵件側欄", hide: "隱藏郵件側欄", concealed: "郵件側欄已隱藏", restored: "郵件側欄已顯示" },
-  });
-
 
   function isSupportedMailRoute(location) {
     return location.protocol === "https:" &&
@@ -52,8 +47,6 @@
       this.isUnreadEmphasisEnabled = true;
       this.observer = null;
       this.refreshScheduled = false;
-      this.toggle = null;
-      this.announcement = null;
       this.runtime = Preferences.getRuntime();
     }
 
@@ -97,40 +90,6 @@
         this.document.documentElement.removeAttribute(SIDEBAR_CONCEALED_ATTRIBUTE);
         anchors.mainContent.removeAttribute(CONTENT_GUTTER_ATTRIBUTE);
       }
-      this.ensureSidebarToggle(anchors.toolbar);
-      this.updateSidebarToggle();
-    }
-
-    ensureSidebarToggle(toolbar) {
-      if (this.toggle && toolbar.contains(this.toggle)) return;
-
-      this.toggle = null;
-      this.announcement = null;
-
-      this.toggle = this.document.createElement("button");
-      this.toggle.type = "button";
-      this.toggle.setAttribute("data-yme-sidebar-toggle", "true");
-      this.toggle.addEventListener("click", () => this.toggleSidebar());
-
-      this.announcement = this.document.createElement("span");
-      this.announcement.setAttribute("aria-live", "polite");
-      this.announcement.setAttribute("data-yme-sidebar-announcement", "true");
-      toolbar.append(this.toggle, this.announcement);
-    }
-
-    updateSidebarToggle() {
-      this.toggle.setAttribute("aria-pressed", String(this.isSidebarConcealed));
-      const copy = COPY[Preferences.resolveDisplayLanguage(global.navigator?.language)];
-      this.toggle.setAttribute("aria-label", this.isSidebarConcealed ? copy.show : copy.hide);
-    }
-
-    async toggleSidebar() {
-      this.isSidebarConcealed = !this.isSidebarConcealed;
-      await this.storage?.set({ sidebarConcealed: this.isSidebarConcealed });
-      if (!this.refresh()) return;
-
-      const copy = COPY[Preferences.resolveDisplayLanguage(global.navigator?.language)];
-      this.announcement.textContent = this.isSidebarConcealed ? copy.concealed : copy.restored;
     }
 
     renderUnreadEmphasis(anchors) {
@@ -192,16 +151,8 @@
       this.document.querySelector(REQUIRED_ANCHORS.mainContent)
         ?.removeAttribute(CONTENT_GUTTER_ATTRIBUTE);
       this.removeUnreadEmphasis();
-      this.removeSidebarToggle();
       this.isManagingView = false;
       this.notifyStatusChange();
-    }
-
-    removeSidebarToggle() {
-      this.toggle?.remove();
-      this.announcement?.remove();
-      this.toggle = null;
-      this.announcement = null;
     }
 
     removeUnreadEmphasis() {

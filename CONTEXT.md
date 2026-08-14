@@ -16,10 +16,6 @@ _Avoid_: Right panel, right-side panel
 The device-local user choice that determines whether the Mail Sidebar is hidden across supported Yahoo Mail tabs.
 _Avoid_: Panel state, toggle state
 
-**Sidebar Toggle**:
-The extension-provided control in the supported Yahoo Mail top toolbar that changes the Sidebar Preference.
-_Avoid_: Icon button, panel button
-
 **Content Gutter**:
 The intentional right-side spacing retained for the mail content after the Mail Sidebar is removed.
 _Avoid_: Right padding, blank space
