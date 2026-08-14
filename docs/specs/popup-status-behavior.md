@@ -15,6 +15,10 @@ The Popup separates the Current Page Status from the device-local preferences th
 
 The Mail Sidebar result reports the actual Sidebar Concealment on the active page. The Unread Emphasis result reports the actual dark-mode treatment on the active page; it does not report the stored preference.
 
+## Layout
+
+The Popup masthead shows only the Yahoo Mail UI Enhancer brand. The feature controls have no visible section heading; horizontal rules separate them from the Current Page Status and disclosure content.
+
 ## Unsupported-page decision
 
 On an unsupported page, the Popup hides the Mail Sidebar and Unread Emphasis result rows. The two feature switches remain visible and operable because they control device-local preferences, not the effects on the current page. A changed preference applies as soon as a supported Yahoo Mail tab is available.

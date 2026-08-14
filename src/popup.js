@@ -48,7 +48,7 @@
       return value;
     };
     document.documentElement.lang = message("language");
-    for (const [id, key] of Object.entries({ title: "extensionName", eyebrow: "eyebrow", "title-heading": "extensionName", "status-heading": "currentPage", "features-heading": "features", "sidebar-label": "sidebar", "unread-label": "unread", "sidebar-status-label": "sidebarStatus", "unread-status-label": "unreadStatus", privacy: "privacy", unofficial: "unofficial", "privacy-link": "privacyLink" })) setText(document, id, message(key));
+    for (const [id, key] of Object.entries({ title: "extensionName", "title-heading": "extensionName", "status-heading": "currentPage", "sidebar-label": "sidebar", "unread-label": "unread", "sidebar-status-label": "sidebarStatus", "unread-status-label": "unreadStatus", privacy: "privacy", unofficial: "unofficial", "privacy-link": "privacyLink" })) setText(document, id, message(key));
     const preferences = await storage?.get(Preferences.defaults) ?? Preferences.defaults;
     const sidebarControl = document.getElementById("sidebar-concealment");
     const unreadControl = document.getElementById("unread-emphasis");
