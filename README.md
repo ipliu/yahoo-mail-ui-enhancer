@@ -38,7 +38,7 @@ Follow [the manual acceptance guide](docs/manual-acceptance.md) before a develop
 
 ## Localization smoke test (macOS)
 
-Run `./scripts/open-locale-test-instance.sh en`, `zh-TW`, or `ja` to open a signed-out Locale Test Instance with the unpacked extension already loaded. Run one language at a time: open `chrome://quit` in the prior instance before switching. The Chrome process applies `-AppleLanguages`, so an extra tab named after the locale is expected and can be closed. The script is development-only and is excluded from release packages.
+Run `./scripts/open-locale-test-instance.sh en`, `zh-TW`, or `ja` to open a signed-out Locale Test Instance. On its first launch, load this repository manually from `chrome://extensions` with Developer mode enabled. Run one language at a time: open `chrome://quit` in the prior instance before switching. The Chrome process applies `-AppleLanguages`, so an extra tab named after the locale is expected and can be closed. The script is development-only and is excluded from release packages.
 
 ## Create a Chrome Web Store package
 

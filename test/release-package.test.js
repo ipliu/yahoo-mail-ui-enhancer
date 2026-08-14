@@ -51,7 +51,8 @@ test("uses Chrome native internationalization for manifest metadata", async () =
 test("provides a macOS Locale Test Instance launcher outside release packages", () => {
   assert.match(localeLauncher, /Usage: .*\{en\|zh-TW\|ja\}/);
   assert.match(localeLauncher, /-AppleLanguages "\(\$locale\)"/);
-  assert.match(localeLauncher, /--load-extension=\$project_dir/);
+  assert.doesNotMatch(localeLauncher, /--load-extension/);
+  assert.doesNotMatch(localeLauncher, /chrome:\/\/extensions/);
   assert.match(localeLauncher, /SingletonLock/);
   assert.match(releaseScript, /-x 'scripts\/\*'/);
 });

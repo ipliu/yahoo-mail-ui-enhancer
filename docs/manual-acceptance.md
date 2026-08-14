@@ -6,7 +6,7 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 
 Run this test separately from the signed-in Yahoo Mail checks. The Locale Test Instance uses a shared, unsigned-in temporary Chrome profile; it must be tested sequentially, never in parallel.
 
-1. Run `./scripts/open-locale-test-instance.sh en`.
+1. Run `./scripts/open-locale-test-instance.sh en`. In that test instance, open `chrome://extensions`, enable Developer mode, and use **Load unpacked** to select this repository. This is required only the first time that temporary profile is used.
 2. In `chrome://extensions`, confirm the extension name and description are English. Close the expected extra `(en)` tab, then open the Popup on a non-Yahoo page. Confirm its copy, accessible names, and `html[lang]` are English.
 3. In the Locale Test Instance, open `chrome://quit` and wait for Chrome to close.
 4. Repeat steps 1–3 with `zh-TW`; confirm the extension metadata, Popup copy, accessible names, and `html[lang]` are Traditional Chinese (Taiwan).

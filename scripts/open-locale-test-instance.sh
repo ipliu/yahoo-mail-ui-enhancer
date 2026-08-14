@@ -2,7 +2,6 @@
 
 set -eu
 
-project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 locale_test_dir="${TMPDIR%/}/yahoo-mail-ui-enhancer-i18n"
 chrome_app="/Applications/Google Chrome.app"
 
@@ -29,6 +28,4 @@ mkdir -p "$locale_test_dir"
 open -n "$chrome_app" --args \
   "--user-data-dir=$locale_test_dir" \
   --no-first-run \
-  "--load-extension=$project_dir" \
-  -AppleLanguages "($locale)" \
-  chrome://extensions
+  -AppleLanguages "($locale)"
