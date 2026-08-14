@@ -186,19 +186,7 @@ function createMessageRow({ unread = false, unreadVisible = true } = {}) {
   return { date, preview, row, rowContent, sender, subject };
 }
 
-function findToggle(toolbar) {
-  return toolbar.children.find(
-    (child) => child.getAttribute("data-yme-sidebar-toggle") === "true",
-  );
-}
-
-function findAnnouncement(toolbar) {
-  return toolbar.children.find(
-    (child) => child.getAttribute("data-yme-sidebar-announcement") === "true",
-  );
-}
-
-test("conceals the Mail Sidebar by default without replacing it", async () => {
+test("conceals the Mail Sidebar by default without replacing it or adding page controls", async () => {
   const PageController = loadPageController();
   const page = createMailDocument({});
   const controller = new PageController(page.document, createStorage());
@@ -208,41 +196,37 @@ test("conceals the Mail Sidebar by default without replacing it", async () => {
   assert.equal(page.document.documentElement.getAttribute("data-yme-sidebar-concealed"), "true");
   assert.equal(page.mainContent.getAttribute("data-yme-content-gutter"), "true");
   assert.equal(page.sidebar.removed, undefined);
-  assert.equal(findToggle(page.toolbar).getAttribute("aria-pressed"), "true");
+  assert.equal(page.toolbar.children.length, 0);
 });
 
-test("Sidebar Toggle restores and conceals the existing Mail Sidebar", async () => {
+test("restores and conceals the existing Mail Sidebar from the stored preference", async () => {
   const PageController = loadPageController();
   const page = createMailDocument({});
-  const controller = new PageController(page.document, createStorage());
+  const preferenceChanges = createPreferenceChanges();
+  const storage = createStorage({}, preferenceChanges);
+  const controller = new PageController(page.document, storage, preferenceChanges);
   await controller.start();
-  const toggle = findToggle(page.toolbar);
 
-  await toggle.dispatch("click");
+  await storage.set({ sidebarConcealed: false });
   assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
   assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
   assert.equal(page.sidebar.removed, undefined);
-  assert.equal(toggle.getAttribute("aria-pressed"), "false");
-  assert.equal(findAnnouncement(page.toolbar).textContent, "Mail Sidebar restored");
 
-  await toggle.dispatch("click", { detail: 0 });
+  await storage.set({ sidebarConcealed: true });
   assert.equal(page.document.documentElement.getAttribute("data-yme-sidebar-concealed"), "true");
-  assert.equal(toggle.getAttribute("aria-pressed"), "true");
 });
 
 test("restores the device-local Sidebar Preference in another supported tab", async () => {
   const PageController = loadPageController();
-  const storage = createStorage();
+  const storage = createStorage({ sidebarConcealed: false });
   const firstPage = createMailDocument({});
   const firstController = new PageController(firstPage.document, storage);
   await firstController.start();
-  await findToggle(firstPage.toolbar).dispatch("click");
 
   const secondPage = createMailDocument({});
   await new PageController(secondPage.document, storage).start();
 
   assert.equal(secondPage.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
-  assert.equal(findToggle(secondPage.toolbar).getAttribute("aria-pressed"), "false");
 });
 
 test("synchronizes Sidebar Preference to an already open supported tab", async () => {
@@ -254,10 +238,9 @@ test("synchronizes Sidebar Preference to an already open supported tab", async (
   await new PageController(firstPage.document, storage, preferenceChanges).start();
   await new PageController(secondPage.document, storage, preferenceChanges).start();
 
-  await findToggle(firstPage.toolbar).dispatch("click");
+  await storage.set({ sidebarConcealed: false });
 
   assert.equal(secondPage.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
-  assert.equal(findToggle(secondPage.toolbar).getAttribute("aria-pressed"), "false");
 });
 
 test("applies a global local-storage change to the current Eligible Mail View", async () => {
@@ -271,7 +254,7 @@ test("applies a global local-storage change to the current Eligible Mail View", 
   await storage.set({ sidebarConcealed: false });
 
   assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
-  assert.equal(findToggle(page.toolbar).getAttribute("aria-pressed"), "false");
+  assert.equal(page.toolbar.children.length, 0);
 });
 
 test("uses the global storage change event by default", async () => {
@@ -298,7 +281,7 @@ test("leaves unsupported pages unchanged", async () => {
 
   assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
   assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
-  assert.equal(findToggle(page.toolbar), undefined);
+  assert.equal(page.toolbar.children.length, 0);
   assert.equal(page.document.documentElement.getAttribute("data-yahoo-state"), "unchanged");
 });
 
@@ -315,7 +298,7 @@ test("leaves pages with missing or altered mail anchors unchanged", async () => 
 
     assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
     assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
-    assert.equal(findToggle(page.toolbar), undefined);
+    assert.equal(page.toolbar.children.length, 0);
   }
 });
 
@@ -330,10 +313,10 @@ test("leaves a non-mail workspace unchanged", async () => {
 
   assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
   assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
-  assert.equal(findToggle(page.toolbar), undefined);
+  assert.equal(page.toolbar.children.length, 0);
 });
 
-test("keeps one Sidebar Toggle after an idempotent refresh", async () => {
+test("does not add page controls after an idempotent refresh", async () => {
   const PageController = loadPageController();
   const page = createMailDocument({});
   const controller = new PageController(page.document, createStorage());
@@ -341,9 +324,7 @@ test("keeps one Sidebar Toggle after an idempotent refresh", async () => {
 
   controller.refresh();
 
-  assert.equal(page.toolbar.children.filter(
-    (child) => child.getAttribute("data-yme-sidebar-toggle") === "true",
-  ).length, 1);
+  assert.equal(page.toolbar.children.length, 0);
 });
 
 test("removes Sidebar Concealment when the Eligible Mail View disappears", async () => {
@@ -357,7 +338,7 @@ test("removes Sidebar Concealment when the Eligible Mail View disappears", async
 
   assert.equal(page.document.documentElement.hasAttribute("data-yme-sidebar-concealed"), false);
   assert.equal(page.mainContent.hasAttribute("data-yme-content-gutter"), false);
-  assert.equal(findToggle(page.toolbar).removed, true);
+  assert.equal(page.toolbar.children.length, 0);
 });
 
 test("emphasizes only unread rows in a dark Eligible Mail View", async () => {

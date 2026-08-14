@@ -7,17 +7,6 @@ html[data-yme-sidebar-concealed="true"] [data-test-id="novation-right-rail"] {
   margin-inline-end: clamp(1rem, 3vw, 3rem);
 }
 
-[data-yme-sidebar-toggle="true"] {
-  appearance: none;
-  background: transparent;
-  border: 1px solid currentColor;
-  border-radius: 0.25rem;
-  color: inherit;
-  cursor: pointer;
-  min-height: 2rem;
-  min-width: 2rem;
-}
-
 li[data-yme-unread-emphasis="true"]:not(:hover):not(:focus-within):not([aria-selected="true"]):not([data-dragging="true"]) > div {
   background-color: #3A4963 !important;
 }
