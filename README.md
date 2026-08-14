@@ -24,7 +24,7 @@ The extension stores Sidebar Preference and feature preferences only on the curr
 
 ## Popup
 
-Open the extension's toolbar icon to use the Popup, the only control surface for Sidebar Preference and Unread Emphasis. It shows whether the current page is an Eligible Mail View and reports the actual Mail Sidebar and Unread Emphasis effects. Both feature controls remain available on unsupported pages and apply as soon as a supported Yahoo Mail tab is open. The Popup follows the browser theme and is available in English and Traditional Chinese (Taiwan).
+Open the extension's toolbar icon to use the Popup, the only control surface for Sidebar Preference and Unread Emphasis. It shows whether the current page is an Eligible Mail View and reports the actual Mail Sidebar and Unread Emphasis effects. Both feature controls remain available on unsupported pages and apply as soon as a supported Yahoo Mail tab is open. Chrome native internationalization provides the Popup and extension metadata in English and Traditional Chinese (Taiwan), with English fallback for other browser languages. The Local Privacy Policy remains in English.
 
 ## Known limitations
 

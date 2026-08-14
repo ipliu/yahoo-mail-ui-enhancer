@@ -26,8 +26,8 @@ test("includes an original local extension icon in the developer-mode package", 
 });
 
 test("declares the current release version and its changelog entry", () => {
-  assert.equal(manifest.version, "0.3.0");
-  assert.match(changelog, /^## \[0\.3\.0\] - 2026-08-14$/m);
+  assert.equal(manifest.version, "0.4.0");
+  assert.match(changelog, /^## \[0\.4\.0\] - 2026-08-14$/m);
 });
 
 test("uses a toolbar Popup instead of an extension settings page", async () => {
@@ -36,6 +36,14 @@ test("uses a toolbar Popup instead of an extension settings page", async () => {
   assert.equal(manifest.permissions.includes("tabs"), false);
   assert.equal(manifest.permissions.includes("activeTab"), false);
   await access(new URL("../popup.html", import.meta.url));
+});
+
+test("uses Chrome native internationalization for manifest metadata", async () => {
+  assert.equal(manifest.default_locale, "en");
+  assert.equal(manifest.name, "__MSG_extensionName__");
+  assert.equal(manifest.description, "__MSG_extensionDescription__");
+  await access(new URL("../_locales/en/messages.json", import.meta.url));
+  await access(new URL("../_locales/zh_TW/messages.json", import.meta.url));
 });
 
 test("documents developer-mode scope, limitations, privacy, and manual acceptance", () => {

@@ -27,4 +27,4 @@ The extension fails closed on an unsupported page: it must not apply Sidebar Con
 - An unsupported page hides both actual-effect rows.
 - An unsupported page keeps both feature switches available and persists changes locally.
 - A verified Eligible Mail View shows only its actual effects.
-- Status and controls remain available in English and Traditional Chinese (Taiwan), with English fallback.
+- Status and controls use Chrome native internationalization in English and Traditional Chinese (Taiwan), with English fallback. The Popup document language matches the resolved catalog.

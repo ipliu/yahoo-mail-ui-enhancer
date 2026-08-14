@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Yahoo Mail UI Enhancer",
-  "version": "0.3.0",
-  "description": "Focused, offline visual improvements for the Supported Mail Interface.",
+  "name": "__MSG_extensionName__",
+  "version": "0.4.0",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
   "icons": {
     "16": "assets/icon-16.png",
     "32": "assets/icon-32.png",

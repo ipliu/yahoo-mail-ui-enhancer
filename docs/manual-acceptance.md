@@ -24,7 +24,8 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 - While the Popup is open, change folders or the Yahoo Mail theme. Confirm Current Page Status updates without reopening the Popup.
 - Open the Popup on a non-Yahoo page and an unsupported Yahoo Mail route. Confirm it displays `Not supported here` with an orange status marker, hides both actual-effect rows, keeps both controls available, and does not change the page.
 - In an active Eligible Mail View, confirm the status marker is green and visually distinct from the orange unsupported-page marker.
-- Verify English and Traditional Chinese (Taiwan) browser language preferences. Confirm Popup copy and accessible names use the selected Display Language.
+- Verify English and Traditional Chinese (Taiwan) Chrome UI language preferences. Confirm Popup copy, accessible names, and the Popup document language use the selected language.
+- Use another Chrome UI language and confirm the Popup and extension name/description fall back to English. Confirm the Local Privacy Policy remains in English for every language.
 - Select `Privacy` and confirm the Local Privacy Policy opens from the extension package without a network request.
 
 ## Unread Emphasis
