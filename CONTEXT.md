@@ -37,8 +37,12 @@ The verified Yahoo Mail list or reading workspace where Sidebar Concealment may 
 _Avoid_: Any mail page, Mail tab
 
 **Display Language**:
-The language used by extension controls and settings. The first release supports English and Traditional Chinese as used in Taiwan, with English as the fallback.
-_Avoid_: Locale, UI language
+The Chrome UI language resolution used for extension controls and metadata. The extension supports English and Traditional Chinese as used in Taiwan, with English as the fallback.
+_Avoid_: Language setting, locale preview
+
+**Locale Test Instance**:
+An isolated, signed-out Chrome launch used to manually verify Chrome-native extension localization during release validation. It is reused sequentially across test languages and is separate from the user's everyday Chrome profiles.
+_Avoid_: Language setting, locale preview
 
 **Popup**:
 The extension action panel that provides quick feature controls, current-page status, and links to its local policy information.

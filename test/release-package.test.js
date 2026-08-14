@@ -5,6 +5,8 @@ import test from "node:test";
 const manifest = JSON.parse(await readFile(new URL("../manifest.json", import.meta.url), "utf8"));
 const readme = await readFile(new URL("../README.md", import.meta.url), "utf8");
 const changelog = await readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8");
+const localeLauncher = await readFile(new URL("../scripts/open-locale-test-instance.sh", import.meta.url), "utf8");
+const releaseScript = await readFile(new URL("../release.sh", import.meta.url), "utf8");
 const acceptanceGuide = await readFile(
   new URL("../docs/manual-acceptance.md", import.meta.url),
   "utf8",
@@ -44,6 +46,14 @@ test("uses Chrome native internationalization for manifest metadata", async () =
   assert.equal(manifest.description, "__MSG_extensionDescription__");
   await access(new URL("../_locales/en/messages.json", import.meta.url));
   await access(new URL("../_locales/zh_TW/messages.json", import.meta.url));
+});
+
+test("provides a macOS Locale Test Instance launcher outside release packages", () => {
+  assert.match(localeLauncher, /Usage: .*\{en\|zh-TW\|ja\}/);
+  assert.match(localeLauncher, /-AppleLanguages "\(\$locale\)"/);
+  assert.match(localeLauncher, /--load-extension=\$project_dir/);
+  assert.match(localeLauncher, /SingletonLock/);
+  assert.match(releaseScript, /-x 'scripts\/\*'/);
 });
 
 test("documents developer-mode scope, limitations, privacy, and manual acceptance", () => {

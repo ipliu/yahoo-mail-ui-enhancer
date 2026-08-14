@@ -31,6 +31,7 @@ zip -qr "$archive_path" . \
   -x 'coverage/*' \
   -x 'docs/*' \
   -x 'release.sh' \
+  -x 'scripts/*' \
   -x 'test/*' \
   -x 'tests/*' \
   -x '*.test.js' \

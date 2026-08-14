@@ -2,6 +2,17 @@
 
 Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verified Eligible Mail View at `https://mail.yahoo.com/n/folders/*` before each check.
 
+## Native i18n smoke test (macOS)
+
+Run this test separately from the signed-in Yahoo Mail checks. The Locale Test Instance uses a shared, unsigned-in temporary Chrome profile; it must be tested sequentially, never in parallel.
+
+1. Run `./scripts/open-locale-test-instance.sh en`.
+2. In `chrome://extensions`, confirm the extension name and description are English. Close the expected extra `(en)` tab, then open the Popup on a non-Yahoo page. Confirm its copy, accessible names, and `html[lang]` are English.
+3. In the Locale Test Instance, open `chrome://quit` and wait for Chrome to close.
+4. Repeat steps 1–3 with `zh-TW`; confirm the extension metadata, Popup copy, accessible names, and `html[lang]` are Traditional Chinese (Taiwan).
+5. Repeat steps 1–3 with `ja`; confirm the extension metadata and Popup fall back to English, including `html[lang="en"]`.
+6. Confirm the Locale Test Instance remains signed out of Yahoo Mail throughout. Do not delete its temporary profile directory between language runs.
+
 ## Setup
 
 1. Load the repository through developer mode as described in the README.
@@ -24,8 +35,7 @@ Use a dedicated signed-in Yahoo Mail test account. Confirm the page is a verifie
 - While the Popup is open, change folders or the Yahoo Mail theme. Confirm Current Page Status updates without reopening the Popup.
 - Open the Popup on a non-Yahoo page and an unsupported Yahoo Mail route. Confirm it displays `Not supported here` with an orange status marker, hides both actual-effect rows, keeps both controls available, and does not change the page.
 - In an active Eligible Mail View, confirm the status marker is green and visually distinct from the orange unsupported-page marker.
-- Verify English and Traditional Chinese (Taiwan) Chrome UI language preferences. Confirm Popup copy, accessible names, and the Popup document language use the selected language.
-- Use another Chrome UI language and confirm the Popup and extension name/description fall back to English. Confirm the Local Privacy Policy remains in English for every language.
+- Complete the Native i18n smoke test above. Confirm the Local Privacy Policy remains in English for every language.
 - Select `Privacy` and confirm the Local Privacy Policy opens from the extension package without a network request.
 
 ## Unread Emphasis
