@@ -1,0 +1,23 @@
+{
+  "language": { "message": "zh-TW" },
+  "extensionName": { "message": "Yahoo Mail UI Enhancer" },
+  "extensionDescription": { "message": "為受支援的郵件介面提供專注、離線的視覺增強功能。" },
+  "currentPage": { "message": "目前頁面" },
+  "checking": { "message": "檢查中" },
+  "active": { "message": "已啟用" },
+  "lightModeStatus": { "message": "淺色模式" },
+  "unsupported": { "message": "此頁面不受支援" },
+  "unsupportedDetail": { "message": "請開啟受支援的 Yahoo Mail 資料夾以套用這些變更。" },
+  "sidebar": { "message": "隱藏郵件側欄" },
+  "unread": { "message": "在深色模式強調未讀信" },
+  "sidebarStatus": { "message": "郵件側欄" },
+  "unreadStatus": { "message": "未讀強調" },
+  "concealed": { "message": "已隱藏" },
+  "shown": { "message": "已顯示" },
+  "unreadActive": { "message": "已啟用" },
+  "lightMode": { "message": "淺色模式無法使用" },
+  "disabled": { "message": "已停用" },
+  "privacy": { "message": "你的偏好設定與頁面變更僅保留在此裝置。此擴充功能不會發出網路請求。" },
+  "unofficial": { "message": "此獨立、非官方擴充功能與 Yahoo 無關。" },
+  "privacyLink": { "message": "隱私權" }
+}

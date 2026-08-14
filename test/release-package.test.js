@@ -5,6 +5,8 @@ import test from "node:test";
 const manifest = JSON.parse(await readFile(new URL("../manifest.json", import.meta.url), "utf8"));
 const readme = await readFile(new URL("../README.md", import.meta.url), "utf8");
 const changelog = await readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8");
+const localeLauncher = await readFile(new URL("../scripts/open-locale-test-instance.sh", import.meta.url), "utf8");
+const releaseScript = await readFile(new URL("../release.sh", import.meta.url), "utf8");
 const acceptanceGuide = await readFile(
   new URL("../docs/manual-acceptance.md", import.meta.url),
   "utf8",
@@ -26,8 +28,8 @@ test("includes an original local extension icon in the developer-mode package", 
 });
 
 test("declares the current release version and its changelog entry", () => {
-  assert.equal(manifest.version, "0.3.0");
-  assert.match(changelog, /^## \[0\.3\.0\] - 2026-08-14$/m);
+  assert.equal(manifest.version, "0.4.0");
+  assert.match(changelog, /^## \[0\.4\.0\] - 2026-08-14$/m);
 });
 
 test("uses a toolbar Popup instead of an extension settings page", async () => {
@@ -36,6 +38,23 @@ test("uses a toolbar Popup instead of an extension settings page", async () => {
   assert.equal(manifest.permissions.includes("tabs"), false);
   assert.equal(manifest.permissions.includes("activeTab"), false);
   await access(new URL("../popup.html", import.meta.url));
+});
+
+test("uses Chrome native internationalization for manifest metadata", async () => {
+  assert.equal(manifest.default_locale, "en");
+  assert.equal(manifest.name, "__MSG_extensionName__");
+  assert.equal(manifest.description, "__MSG_extensionDescription__");
+  await access(new URL("../_locales/en/messages.json", import.meta.url));
+  await access(new URL("../_locales/zh_TW/messages.json", import.meta.url));
+});
+
+test("provides a macOS Locale Test Instance launcher outside release packages", () => {
+  assert.match(localeLauncher, /Usage: .*\{en\|zh-TW\|ja\}/);
+  assert.match(localeLauncher, /-AppleLanguages "\(\$locale\)"/);
+  assert.doesNotMatch(localeLauncher, /--load-extension/);
+  assert.doesNotMatch(localeLauncher, /chrome:\/\/extensions/);
+  assert.match(localeLauncher, /SingletonLock/);
+  assert.match(releaseScript, /-x 'scripts\/\*'/);
 });
 
 test("documents developer-mode scope, limitations, privacy, and manual acceptance", () => {

@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 ## Unreleased
 
+## [0.4.0] - 2026-08-14
+
+### Added
+
+- Added a macOS Locale Test Instance launcher for repeatable native i18n smoke tests without Yahoo Mail sign-in.
+
+### Changed
+
+- Moved Popup and manifest copy to Chrome native internationalization catalogs for English and Traditional Chinese (Taiwan), with English fallback.
+- Kept the Local Privacy Policy in English while documenting the localized Popup's accessibility language behavior.
+
 ## [0.3.0] - 2026-08-14
 
 ### Added

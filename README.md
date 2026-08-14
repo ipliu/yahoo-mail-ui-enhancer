@@ -24,7 +24,7 @@ The extension stores Sidebar Preference and feature preferences only on the curr
 
 ## Popup
 
-Open the extension's toolbar icon to use the Popup, the only control surface for Sidebar Preference and Unread Emphasis. It shows whether the current page is an Eligible Mail View and reports the actual Mail Sidebar and Unread Emphasis effects. Both feature controls remain available on unsupported pages and apply as soon as a supported Yahoo Mail tab is open. The Popup follows the browser theme and is available in English and Traditional Chinese (Taiwan).
+Open the extension's toolbar icon to use the Popup, the only control surface for Sidebar Preference and Unread Emphasis. It shows whether the current page is an Eligible Mail View and reports the actual Mail Sidebar and Unread Emphasis effects. Both feature controls remain available on unsupported pages and apply as soon as a supported Yahoo Mail tab is open. Chrome native internationalization provides the Popup and extension metadata in English and Traditional Chinese (Taiwan), with English fallback for other browser languages. The Local Privacy Policy remains in English.
 
 ## Known limitations
 
@@ -36,6 +36,10 @@ Open the extension's toolbar icon to use the Popup, the only control surface for
 
 Follow [the manual acceptance guide](docs/manual-acceptance.md) before a developer-mode release.
 
+## Localization smoke test (macOS)
+
+Run `./scripts/open-locale-test-instance.sh en`, `zh-TW`, or `ja` to open a signed-out Locale Test Instance. On its first launch, load this repository manually from `chrome://extensions` with Developer mode enabled. Run one language at a time: open `chrome://quit` in the prior instance before switching. The Chrome process applies `-AppleLanguages`, so an extra tab named after the locale is expected and can be closed. The script is development-only and is excluded from release packages.
+
 ## Create a Chrome Web Store package
 
-Run `./release.sh` from the repository root. It creates `dist/yahoo-mail-ui-enhancer-<version>.zip`, with `manifest.json` at the ZIP root. The package excludes Git metadata, documentation, source maps, test files, release tooling, local build output, and common secret-file formats. Review the generated ZIP before uploading it to the Chrome Web Store.
+Run `./release.sh` from the repository root. It creates `dist/yahoo-mail-ui-enhancer-<version>.zip`, with `manifest.json` at the ZIP root. The package excludes Git metadata, documentation, source maps, test files, development tooling, local build output, and common secret-file formats. Review the generated ZIP before uploading it to the Chrome Web Store.

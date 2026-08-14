@@ -18,9 +18,6 @@
     getTabs() {
       return global.browser?.tabs ?? global.chrome?.tabs;
     },
-    resolveDisplayLanguage(displayLanguage) {
-      return displayLanguage === "zh-TW" ? "zh-TW" : "en";
-    },
   });
 
   global.YahooMailUiEnhancer = Object.freeze({

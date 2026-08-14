@@ -38,8 +38,6 @@ body { background: var(--canvas); color: var(--ink); margin: 0; min-width: 22rem
 
 .brand-mark { display: block; height: 2rem; width: 2rem; }
 
-.eyebrow { color: var(--muted-ink); font-size: .65rem; font-weight: 750; letter-spacing: .14em; line-height: 1; margin: 0 0 .28rem; }
-
 h1, h2, p { margin: 0; }
 
 [hidden] { display: none !important; }
@@ -75,8 +73,6 @@ dt { color: var(--muted); font-size: .8rem; }
 dd { color: var(--ink); font-size: .82rem; font-weight: 700; margin: 0; text-align: end; }
 
 .feature-controls { border-bottom: 1px solid var(--rule); border-top: 1px solid var(--rule); display: grid; }
-
-.feature-controls h2 { padding: .68rem 0 .45rem; }
 
 .feature-control { align-items: center; border-top: 1px solid var(--rule); cursor: pointer; display: flex; font-size: .88rem; font-weight: 650; gap: 1rem; justify-content: space-between; min-height: 3.35rem; }
 
