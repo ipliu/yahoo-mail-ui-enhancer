@@ -6,7 +6,7 @@ const manifest = JSON.parse(await readFile(new URL("../manifest.json", import.me
 const readme = await readFile(new URL("../README.md", import.meta.url), "utf8");
 const changelog = await readFile(new URL("../CHANGELOG.md", import.meta.url), "utf8");
 const localeLauncher = await readFile(new URL("../scripts/open-locale-test-instance.sh", import.meta.url), "utf8");
-const releaseScript = await readFile(new URL("../release.sh", import.meta.url), "utf8");
+const releaseScript = await readFile(new URL("../scripts/release.sh", import.meta.url), "utf8");
 const acceptanceGuide = await readFile(
   new URL("../docs/manual-acceptance.md", import.meta.url),
   "utf8",
@@ -55,6 +55,13 @@ test("provides a macOS Locale Test Instance launcher outside release packages", 
   assert.doesNotMatch(localeLauncher, /chrome:\/\/extensions/);
   assert.match(localeLauncher, /SingletonLock/);
   assert.match(releaseScript, /-x 'scripts\/\*'/);
+  assert.match(releaseScript, /-x '\.github\/\*'/);
+  assert.match(releaseScript, /-x 'store-assets\/\*'/);
+});
+
+test("keeps the release command with the other development scripts", async () => {
+  await assert.rejects(access(new URL("../release.sh", import.meta.url)));
+  assert.match(releaseScript, /project_dir=.*\$script_dir\/\.\./);
 });
 
 test("documents developer-mode scope, limitations, privacy, and manual acceptance", () => {

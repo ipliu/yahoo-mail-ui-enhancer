@@ -11,6 +11,7 @@ All notable changes to this project are documented in this file.
 - Refined the Popup hierarchy with branded feature description, separate Actual-Effect Cards, and aligned Local Privacy Policy link.
 - Updated Popup copy in English and Traditional Chinese (Taiwan), including enabled, disabled, and light-mode effect states.
 - Updated the light and dark Popup palette to replace purple accents with the extension's midnight-blue and ice-blue brand treatment.
+- Moved the release command into `scripts/` and excluded GitHub workflows and store assets from Chrome Web Store packages.
 
 ## [0.4.0] - 2026-08-14
 

@@ -2,7 +2,8 @@
 
 set -eu
 
-project_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+project_dir=$(CDPATH= cd -- "$script_dir/.." && pwd)
 manifest_path="$project_dir/manifest.json"
 
 if [ ! -f "$manifest_path" ]; then
@@ -25,13 +26,14 @@ rm -f "$archive_path"
 cd "$project_dir"
 zip -qr "$archive_path" . \
   -x '.git/*' \
+  -x '.github/*' \
   -x 'dist/*' \
   -x 'build/*' \
   -x 'node_modules/*' \
   -x 'coverage/*' \
   -x 'docs/*' \
-  -x 'release.sh' \
   -x 'scripts/*' \
+  -x 'store-assets/*' \
   -x 'test/*' \
   -x 'tests/*' \
   -x '*.test.js' \
@@ -52,7 +54,7 @@ if ! unzip -Z1 "$archive_path" | grep -qx 'manifest.json'; then
   exit 1
 fi
 
-if unzip -Z1 "$archive_path" | grep -E '(^|/)(\.git|test|tests)(/|$)|\.map$|(^|/)\.env(\.|$)|\.(key|pem|p12|pfx)$|secret|credential' >/dev/null; then
+if unzip -Z1 "$archive_path" | grep -E '(^|/)(\.git|\.github|store-assets|test|tests)(/|$)|\.map$|(^|/)\.env(\.|$)|\.(key|pem|p12|pfx)$|secret|credential' >/dev/null; then
   echo "Release archive contains an excluded file." >&2
   exit 1
 fi
