@@ -8,8 +8,8 @@
     const effects = document.getElementById("effect-status");
     const statusCard = document.getElementById("status-card");
     if (status?.state === "active" || status?.state === "light-mode") {
-      statusCard.dataset.state = status.state;
-      setText(document, "status", status.state === "light-mode" ? message("lightModeStatus") : message("active"));
+      statusCard.dataset.state = "active";
+      setText(document, "status", message("active"));
       setText(document, "status-detail", "");
       effects.hidden = false;
       setText(document, "sidebar-status", status.sidebar === "concealed" ? message("concealed") : message("shown"));
@@ -48,7 +48,7 @@
       return value;
     };
     document.documentElement.lang = message("language");
-    for (const [id, key] of Object.entries({ title: "extensionName", "title-heading": "extensionName", "status-heading": "currentPage", "sidebar-label": "sidebar", "unread-label": "unread", "sidebar-status-label": "sidebarStatus", "unread-status-label": "unreadStatus", privacy: "privacy", unofficial: "unofficial", "privacy-link": "privacyLink" })) setText(document, id, message(key));
+    for (const [id, key] of Object.entries({ title: "extensionName", "title-heading": "extensionName", subtitle: "subtitle", "status-heading": "currentPage", "sidebar-label": "sidebar", "unread-label": "unread", "sidebar-status-label": "sidebarStatus", "unread-status-label": "unreadStatus", privacy: "privacy", "privacy-boundary-copy": "privacyBoundary", unofficial: "unofficial", "privacy-link": "privacyLink" })) setText(document, id, message(key));
     const preferences = await storage?.get(Preferences.defaults) ?? Preferences.defaults;
     const sidebarControl = document.getElementById("sidebar-concealment");
     const unreadControl = document.getElementById("unread-emphasis");

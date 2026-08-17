@@ -29,14 +29,16 @@ Run this test separately from the signed-in Yahoo Mail checks. The Locale Test I
 
 ## Popup and Current Page Status
 
-- In a dark Eligible Mail View, open the Popup and confirm Current Page Status is `Active`, Mail Sidebar reports `Concealed` or `Shown`, and Unread Emphasis reports `Active`.
-- In a light Eligible Mail View, confirm the Popup reports that Unread Emphasis is unavailable in light mode while the Mail Sidebar status remains accurate.
+- Confirm the Popup order is brand and feature description, Current Page Status, two Actual-Effect Cards, feature controls, then disclosure. Confirm the icon is on a circular background and that light mode uses a restrained white, black, and gray hierarchy without purple accents.
+- In a dark Eligible Mail View, confirm Current Page Status is `Enabled`, Mail Sidebar reports `Hidden` or `Not hidden`, and Unread Emphasis reports `Enabled` or `Not enabled`.
+- In a light Eligible Mail View, confirm Current Page Status remains `Enabled`, while Unread Emphasis reports `Not supported in light mode` and the Mail Sidebar status remains accurate.
+- Simulate a delayed supported-page load. Confirm both Actual-Effect Cards are hidden while `Checking`, the fallback is `Not enabled` after the retry, and the verified status and cards appear when the page finishes loading.
 - Toggle each feature in the Popup. Confirm the effect applies immediately in the current tab and every already open Eligible Mail View.
 - While the Popup is open, change folders or the Yahoo Mail theme. Confirm Current Page Status updates without reopening the Popup.
-- Open the Popup on a non-Yahoo page and an unsupported Yahoo Mail route. Confirm it displays `Not supported here` with an orange status marker, hides both actual-effect rows, keeps both controls available, and does not change the page.
+- Open the Popup on a non-Yahoo page and an unsupported Yahoo Mail route. Confirm it displays `Not enabled` with an orange status marker, hides both Actual-Effect Cards, keeps both controls available, and does not change the page.
 - In an active Eligible Mail View, confirm the status marker is green and visually distinct from the orange unsupported-page marker.
 - Complete the Native i18n smoke test above. Confirm the Local Privacy Policy remains in English for every language.
-- Select `Privacy` and confirm the Local Privacy Policy opens from the extension package without a network request.
+- Confirm the `Privacy Policy` link is aligned with the no-tracking statement and opens the Local Privacy Policy from the extension package without a network request.
 
 ## Unread Emphasis
 
@@ -59,7 +61,7 @@ Record the browser version, test-account date, light and dark theme outcomes, na
 
 ## Chrome Web Store package
 
-1. Run `./release.sh` from the repository root.
+1. Run `./scripts/release.sh` from the repository root.
 2. Confirm `dist/yahoo-mail-ui-enhancer-<version>.zip` contains `manifest.json` at its root.
 3. Confirm the ZIP contains no Git metadata, source maps, test files, or secret files.
 4. Load the exact ZIP contents as an unpacked extension and repeat the applicable checks above before uploading the ZIP to the Chrome Web Store.

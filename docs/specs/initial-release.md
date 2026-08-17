@@ -42,7 +42,7 @@ Deliver an independent browser extension that operates only on the verified Yaho
 - Identify the Mail Sidebar through its verified right-rail test attribute and conceal it with reversible CSS `display: none`, never by removing or recreating Yahoo Mail DOM nodes.
 - Apply the Content Gutter to the verified main content area using responsive logical CSS spacing that follows the content's existing horizontal rhythm.
 - Store Sidebar Preference and independent feature switches in device-local extension storage. Default Sidebar Concealment and Unread Emphasis to enabled.
-- Provide a browser-toolbar Popup as the single preference-control surface. It has separate switches for Sidebar Concealment and Unread Emphasis, Current Page Status, concise offline/privacy and unofficial-extension text, and a Local Privacy Policy link. It uses existing Yahoo Mail host access to obtain active-page status without adding `tabs` or `activeTab` permissions.
+- Provide a browser-toolbar Popup as the single preference-control surface. It presents its brand, concise feature description, Current Page Status, separate Actual-Effect Cards, separate switches for Sidebar Concealment and Unread Emphasis, and offline/privacy and unofficial-extension disclosure with a Local Privacy Policy link. It uses existing Yahoo Mail host access to obtain active-page status without adding `tabs` or `activeTab` permissions.
 - Localize Popup text, controls, and manifest metadata with Chrome native internationalization. Provide `en` and `zh_TW` catalogs, select Traditional Chinese only when Chrome resolves `zh-TW`, and use English for every other language. Keep the Local Privacy Policy in English.
 - Use Yahoo Mail's verified Mail Theme Marker to gate Unread Emphasis. Apply it only when the page declares dark mode; do not infer it from the operating system theme.
 - Identify unread rows through Yahoo Mail's verified unread indicator, then apply the `#3A4963` dark-mode background only to static unread rows. Preserve Yahoo's existing unread dot, `font-weight: 600` for unread senders and subjects, and preview, date, attachments, and labels without extension-owned changes.
@@ -60,7 +60,7 @@ Deliver an independent browser extension that operates only on the verified Yaho
 - Verify fail-closed behavior for missing or altered anchors, unsupported routes, and non-mail workspaces: neither feature may alter the page.
 - Verify dynamic behavior after simulated route changes, mail-list replacement, theme changes, and virtualized row updates; repeated observation must be idempotent.
 - Verify localization fallback and both supported Display Languages, plus keyboard and screen-reader semantics for Popup controls and state changes.
-- Verify Current Page Status for active dark mode, light mode, and unsupported pages; verify that the Popup controls remain usable when the current page is unsupported.
+- Verify the Popup information hierarchy and separate Actual-Effect Cards for active dark mode and light mode; verify Checking, delayed-status fallback and recovery, unsupported pages, and that the Popup controls remain usable when the current page is unsupported.
 - Perform manual regression checks with a dedicated signed-in test account in light mode, dark mode, narrow viewport, mail list, message reading, switching and reload persistence, and failure cases.
 - There is no pre-existing test suite; this feature establishes the first test seam and its fixtures.
 
