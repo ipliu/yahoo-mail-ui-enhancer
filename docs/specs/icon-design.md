@@ -21,4 +21,4 @@ The source is `assets/icon.svg`. The manifest registers PNG derivatives at 16, 3
 
 ## Popup relationship
 
-The Popup reuses the icon as its compact brand mark and takes its midnight-blue and ice-blue brand palette from this design. Current Page Status uses separate semantic colors: green for an active Eligible Mail View and orange for an unsupported page. Popup status and feature behavior are defined separately in `docs/specs/popup-status-behavior.md`.
+The Popup reuses the icon as its compact brand mark, setting it on a circular pale-ice background in light mode and muted-blue background in dark mode so its midnight-blue envelope remains distinct. The enabled switch uses midnight blue in light mode and the dark mode background continues the midnight-blue palette. Current Page Status uses separate semantic colors: green for an active Eligible Mail View and orange for an unsupported page. Popup status and feature behavior are defined separately in `docs/specs/popup-status-behavior.md`.

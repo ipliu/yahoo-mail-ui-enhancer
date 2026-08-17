@@ -9,8 +9,11 @@
   <body>
     <main class="popup-shell">
       <header class="masthead">
-        <img class="brand-mark" src="assets/icon-48.png" width="32" height="32" alt="">
-        <h1 id="title-heading">Yahoo Mail UI Enhancer</h1>
+        <span class="brand-mark-wrap"><img class="brand-mark" src="assets/icon-48.png" width="32" height="32" alt=""></span>
+        <div>
+          <h1 id="title-heading">Yahoo Mail UI Enhancer</h1>
+          <p id="subtitle">Hide the sidebar. Highlight unread mail.</p>
+        </div>
       </header>
       <section id="status-card" aria-labelledby="status-heading" class="status-card" data-state="checking">
         <div class="status-heading-row">
@@ -18,19 +21,19 @@
           <p id="status" class="status-value" aria-live="polite">Checking</p>
         </div>
         <p id="status-detail"></p>
-        <dl id="effect-status" hidden>
-          <div><dt id="sidebar-status-label">Sidebar</dt><dd id="sidebar-status"></dd></div>
-          <div><dt id="unread-status-label">Unread emphasis</dt><dd id="unread-status"></dd></div>
-        </dl>
       </section>
+      <dl id="effect-status" hidden>
+        <div id="sidebar-effect-card" class="effect-card"><dt id="sidebar-status-label">Mail Sidebar</dt><dd id="sidebar-status"></dd></div>
+        <div id="unread-effect-card" class="effect-card"><dt id="unread-status-label">Unread emphasis</dt><dd id="unread-status"></dd></div>
+        </dl>
       <div class="feature-controls">
         <label class="feature-control"><span id="sidebar-label">Conceal Mail Sidebar</span><input id="sidebar-concealment" type="checkbox"></label>
         <label class="feature-control"><span id="unread-label">Emphasize unread mail in dark mode</span><input id="unread-emphasis" type="checkbox"></label>
       </div>
       <footer class="disclosure">
-        <p id="privacy">Your preferences and page changes stay on this device. This extension makes no network requests.</p>
+        <p id="privacy">All preferences are stored on this device.</p>
+        <p class="privacy-boundary"><span id="privacy-boundary-copy">No mail data is sent, analyzed, or tracked.</span><a id="privacy-link" href="privacy.html" target="_blank">Privacy Policy</a></p>
         <p id="unofficial">This independent, unofficial extension is not affiliated with Yahoo.</p>
-        <a id="privacy-link" href="privacy.html" target="_blank">Privacy</a>
       </footer>
     </main>
     <script src="src/preferences.js"></script>

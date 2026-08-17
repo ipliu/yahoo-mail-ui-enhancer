@@ -28,8 +28,8 @@ test("includes an original local extension icon in the developer-mode package", 
 });
 
 test("declares the current release version and its changelog entry", () => {
-  assert.equal(manifest.version, "0.4.0");
-  assert.match(changelog, /^## \[0\.4\.0\] - 2026-08-14$/m);
+  assert.equal(manifest.version, "0.5.0");
+  assert.match(changelog, /^## \[0\.5\.0\] - 2026-08-14$/m);
 });
 
 test("uses a toolbar Popup instead of an extension settings page", async () => {

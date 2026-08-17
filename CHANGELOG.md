@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 ## Unreleased
 
+## [0.5.0] - 2026-08-14
+
+### Changed
+
+- Refined the Popup hierarchy with branded feature description, separate Actual-Effect Cards, and aligned Local Privacy Policy link.
+- Updated Popup copy in English and Traditional Chinese (Taiwan), including enabled, disabled, and light-mode effect states.
+- Updated the light and dark Popup palette to replace purple accents with the extension's midnight-blue and ice-blue brand treatment.
+
 ## [0.4.0] - 2026-08-14
 
 ### Added

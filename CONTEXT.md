@@ -52,6 +52,10 @@ _Avoid_: Settings page, menu
 The Popup's report of whether the active browser page is an Eligible Mail View and which extension effects currently apply there.
 _Avoid_: Enabled status, extension status
 
+**Actual-Effect Card**:
+A scannable Popup card that reports the effect currently applied on the active Eligible Mail View. It never represents a device-local feature preference.
+_Avoid_: Preference card, feature setting
+
 **Local Privacy Policy**:
 The extension-bundled offline page that explains its data boundary and independent status.
 _Avoid_: Privacy link, external privacy policy

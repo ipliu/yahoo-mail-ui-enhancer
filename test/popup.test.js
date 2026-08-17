@@ -10,8 +10,9 @@ const preferencesSource = await readFile(new URL("../src/preferences.js", import
 const englishMessages = JSON.parse(await readFile(new URL("../_locales/en/messages.json", import.meta.url), "utf8"));
 const traditionalChineseMessages = JSON.parse(await readFile(new URL("../_locales/zh_TW/messages.json", import.meta.url), "utf8"));
 
-function loadPopup() {
+function loadPopup(setTimeout) {
   const context = { globalThis: {} };
+  if (setTimeout) context.globalThis.setTimeout = setTimeout;
   vm.runInNewContext(preferencesSource, context);
   vm.runInNewContext(popupSource, context);
   return context.globalThis.YahooMailUiEnhancer.Popup;
@@ -27,7 +28,7 @@ function createElement() {
 }
 
 function createPopupDocument() {
-  const ids = ["title", "title-heading", "status-heading", "status-card", "status", "status-detail", "effect-status", "sidebar-status-label", "unread-status-label", "sidebar-status", "unread-status", "sidebar-concealment", "unread-emphasis", "sidebar-label", "unread-label", "privacy", "unofficial", "privacy-link"];
+  const ids = ["title", "title-heading", "subtitle", "status-heading", "status-card", "status", "status-detail", "effect-status", "sidebar-effect-card", "unread-effect-card", "sidebar-status-label", "unread-status-label", "sidebar-status", "unread-status", "sidebar-concealment", "unread-emphasis", "sidebar-label", "unread-label", "privacy", "privacy-boundary-copy", "unofficial", "privacy-link"];
   const elements = new Map(ids.map((id) => [id, createElement()]));
   return { documentElement: { lang: "en" }, elements, getElementById(id) { return elements.get(id); } };
 }
@@ -54,9 +55,11 @@ test("shows actual effects and immediately persists Popup controls", async () =>
 
   await setupPopup(document, storage, runtime, tabs, createI18n(englishMessages));
 
-  assert.equal(document.elements.get("status").textContent, "Light mode");
-  assert.equal(document.elements.get("sidebar-status").textContent, "Shown");
-  assert.equal(document.elements.get("unread-status").textContent, "Unavailable in light mode");
+  assert.equal(document.elements.get("status").textContent, "Enabled");
+  assert.equal(document.elements.get("sidebar-status").textContent, "Not hidden");
+  assert.equal(document.elements.get("unread-status").textContent, "Not supported in light mode");
+  assert.equal(document.elements.get("status-card").dataset.state, "active");
+  assert.equal(document.elements.get("effect-status").hidden, false);
   document.elements.get("sidebar-concealment").checked = true;
   await document.elements.get("sidebar-concealment").dispatch("change");
   assert.equal(storage.values.sidebarConcealed, true);
@@ -89,9 +92,9 @@ test("reports unsupported pages while keeping Traditional Chinese controls avail
 
   await setupPopup(document, storage, createRuntime(), tabs, createI18n(traditionalChineseMessages));
 
-  assert.equal(document.elements.get("status").textContent, "此頁面不受支援");
+  assert.equal(document.elements.get("status").textContent, "未啟用");
   assert.equal(document.elements.get("sidebar-label").textContent, "隱藏郵件側欄");
-  assert.equal(document.elements.get("unread-label").textContent, "在深色模式強調未讀信");
+  assert.equal(document.elements.get("unread-label").textContent, "強調未讀信");
   assert.equal(document.elements.get("title-heading").textContent, "Yahoo Mail UI Enhancer");
   assert.equal(document.documentElement.lang, "zh-TW");
   assert.equal(document.elements.get("effect-status").hidden, true);
@@ -110,8 +113,59 @@ test("refreshes Current Page Status from the active Yahoo Mail tab", async () =>
 
   runtime.emit({ type: "yme-page-status", status: { state: "not-supported" } }, { tab: { id: 5 } });
 
-  assert.equal(document.elements.get("status").textContent, "Not supported here");
+  assert.equal(document.elements.get("status").textContent, "Not enabled");
   assert.equal(document.elements.get("effect-status").hidden, true);
+});
+
+test("keeps actual-effect cards hidden while the page status is checking, then reveals them when Yahoo Mail responds", async () => {
+  const { setupPopup } = loadPopup();
+  const document = createPopupDocument();
+  let respond;
+  let reportRequested;
+  const statusRequested = new Promise((resolve) => { reportRequested = resolve; });
+  const tabs = {
+    async query() { return [{ id: 12 }]; },
+    sendMessage() {
+      reportRequested();
+      return new Promise((resolve) => { respond = resolve; });
+    },
+  };
+
+  const setup = setupPopup(document, createStorage(), createRuntime(), tabs, createI18n(englishMessages));
+  await statusRequested;
+
+  assert.equal(document.elements.get("status").textContent, "Checking");
+  assert.equal(document.elements.get("effect-status").hidden, true);
+  respond({ state: "active", sidebar: "concealed", unread: "active" });
+  await setup;
+
+  assert.equal(document.elements.get("status").textContent, "Enabled");
+  assert.equal(document.elements.get("effect-status").hidden, false);
+});
+
+test("recovers from the delayed-page fallback when Yahoo Mail later reports a verified status", async () => {
+  let completeRetry;
+  const retried = new Promise((resolve) => { completeRetry = resolve; });
+  const { setupPopup } = loadPopup((callback) => Promise.resolve(callback()).then(completeRetry));
+  const document = createPopupDocument();
+  const runtime = createRuntime();
+  const tabs = {
+    async query() { return [{ id: 13, url: "https://mail.yahoo.com/n/folders/1" }]; },
+    async sendMessage() { throw new Error("Yahoo Mail is still loading"); },
+  };
+
+  await setupPopup(document, createStorage(), runtime, tabs, createI18n(englishMessages));
+  await retried;
+
+  assert.equal(document.elements.get("status").textContent, "Not enabled");
+  assert.equal(document.elements.get("effect-status").hidden, true);
+  runtime.emit(
+    { type: "yme-page-status", status: { state: "active", sidebar: "concealed", unread: "active" } },
+    { tab: { id: 13 } },
+  );
+
+  assert.equal(document.elements.get("status").textContent, "Enabled");
+  assert.equal(document.elements.get("effect-status").hidden, false);
 });
 
 test("keeps hidden Popup status rows out of the rendered layout", () => {
@@ -119,14 +173,46 @@ test("keeps hidden Popup status rows out of the rendered layout", () => {
 });
 
 test("uses distinct visual treatments for active and unsupported page statuses", () => {
-  assert.match(popupCss, /#status-card\[data-state="active"\]\s*\{\s*border-left-color:\s*var\(--success\);/);
-  assert.match(popupCss, /#status-card\[data-state="not-supported"\]\s*\{\s*border-left-color:\s*var\(--notice\);/);
+  assert.match(popupCss, /#status-card\[data-state="active"\]\s+\.status-value::before\s*\{\s*background:\s*var\(--success\);/);
+  assert.match(popupCss, /#status-card\[data-state="not-supported"\]\s+\.status-value::before\s*\{\s*background:\s*var\(--notice\);/);
 });
 
-test("shows only the brand above the Popup status and separates controls with rules", () => {
-  assert.doesNotMatch(popupHtml, /id="eyebrow"/);
+test("moves the switch thumb to the enabled position", () => {
+  assert.match(popupCss, /\.feature-control input:checked::after\s*\{\s*transform:\s*translateX\(1\.05rem\);/);
+});
+
+test("keeps light-mode text, loading status, and focus treatment neutral", () => {
+  assert.match(popupCss, /\.status-value::before\s*\{\s*background:\s*var\(--muted\);/);
+  assert.match(popupCss, /\.feature-control input:focus-visible, a:focus-visible\s*\{\s*outline:\s*2px solid var\(--ink\);/);
+  assert.match(popupCss, /a\s*\{\s*color:\s*var\(--ink\);/);
+});
+
+test("orders the branded Popup header, status, separate actual-effect cards, controls, and disclosure", () => {
+  assert.match(popupHtml, /id="subtitle"/);
+  assert.match(popupHtml, /id="sidebar-effect-card"/);
+  assert.match(popupHtml, /id="unread-effect-card"/);
+  assert.ok(popupHtml.indexOf('class="masthead"') < popupHtml.indexOf('id="status-card"'));
+  assert.ok(popupHtml.indexOf('id="status-card"') < popupHtml.indexOf('id="effect-status"'));
+  assert.ok(popupHtml.indexOf('id="effect-status"') < popupHtml.indexOf('class="feature-controls"'));
+  assert.ok(popupHtml.indexOf('class="feature-controls"') < popupHtml.indexOf('class="disclosure"'));
   assert.doesNotMatch(popupHtml, /id="features-heading"/);
   assert.match(popupCss, /\.feature-controls\s*\{\s*border-bottom: 1px solid var\(--rule\); border-top: 1px solid var\(--rule\);/);
+});
+
+test("uses the agreed English and Traditional Chinese Popup copy", () => {
+  assert.equal(englishMessages.subtitle.message, "Hide the sidebar. Highlight unread mail.");
+  assert.equal(englishMessages.active.message, "Enabled");
+  assert.equal(englishMessages.unsupported.message, "Not enabled");
+  assert.equal(englishMessages.concealed.message, "Hidden");
+  assert.equal(englishMessages.shown.message, "Not hidden");
+  assert.equal(englishMessages.lightMode.message, "Not supported in light mode");
+  assert.equal(traditionalChineseMessages.subtitle.message, "隱藏側欄，強調未讀信");
+  assert.equal(traditionalChineseMessages.active.message, "已啟用");
+  assert.equal(traditionalChineseMessages.unsupported.message, "未啟用");
+  assert.equal(traditionalChineseMessages.concealed.message, "已隱藏");
+  assert.equal(traditionalChineseMessages.shown.message, "未隱藏");
+  assert.equal(traditionalChineseMessages.lightMode.message, "不支援淺色模式");
+  assert.equal(traditionalChineseMessages.privacyLink.message, "隱私權政策");
 });
 
 test("requires complete, non-empty native message catalogs", () => {
