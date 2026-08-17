@@ -30,6 +30,7 @@ All notable changes to this project are documented in this file.
 
 - Added a release script that creates a Chrome Web Store ZIP package and excludes development and secret files.
 - Added Chrome Web Store screenshots and a GitHub Pages workflow that publishes the local privacy policy.
+- Added English Chrome Web Store screenshots for the inbox and Popup views.
 
 ### Changed
 
